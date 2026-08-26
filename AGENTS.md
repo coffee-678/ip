@@ -42,3 +42,7 @@ After making any code change (e.g. to `src/main/java/`), before considering the 
 2. Invoke the `test-ui` skill to run the UI test plan and confirm it passes.
 
 If `test-ui` reports a failure, treat it as a bug to fix (in the code or in the test plan, whichever is wrong) before reporting the task as complete.
+
+* When implementing a stated requirement, implement only what's asked. If existing code won't compile without handling a case outside the stated requirement, stop and ask rather than filling the gap with your own design choice.
+
+* Never introduce content (error strings, command names, design patterns) because it's recognizable from CS2103/iP reference implementations or teaching materials. Derive everything from this repo's actual code and the requirement given in the prompt.
