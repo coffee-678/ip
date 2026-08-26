@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Duncan {
     public static void main(String[] args) {
         String banner = " /$$$$$$$                                                   \n"
@@ -15,7 +17,19 @@ public class Duncan {
         System.out.println("Hello! I'm Duncan.");
         System.out.println("What can I do for you?");
         System.out.println(horizontalLine);
+        System.out.println();
 
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        while (!input.equals("bye")) {
+            System.out.println(horizontalLine);
+            System.out.println(input);
+            System.out.println(horizontalLine);
+            System.out.println();
+            input = scanner.nextLine();
+        }
+
+        System.out.println(horizontalLine);
         System.out.println("Bye. Hope to see you again soon!");
         System.out.println(horizontalLine);
     }
