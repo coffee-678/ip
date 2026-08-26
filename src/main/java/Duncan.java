@@ -19,11 +19,22 @@ public class Duncan {
         System.out.println(horizontalLine);
         System.out.println();
 
+        String[] tasks = new String[100];
+        int taskCount = 0;
+
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         while (!input.equals("bye")) {
             System.out.println(horizontalLine);
-            System.out.println(input);
+            if (input.equals("list")) {
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println((i + 1) + ". " + tasks[i]);
+                }
+            } else {
+                tasks[taskCount] = input;
+                taskCount++;
+                System.out.println("added: " + input);
+            }
             System.out.println(horizontalLine);
             System.out.println();
             input = scanner.nextLine();
