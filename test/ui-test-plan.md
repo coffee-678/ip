@@ -18,6 +18,7 @@ python3 .claude/skills/test-ui/scripts/run_ui_tests.py . test/ui-test-plan.md
 * Source under test: `src/main/java/Duncan.java`, `src/main/java/Task.java`,
   `src/main/java/Todo.java`, `src/main/java/Deadline.java`,
   `src/main/java/Event.java`, `src/main/java/DukeException.java`.
+* Tasks are stored in an `ArrayList<Task>`.
 * Each test case has an **Aim**, a **Commands** block (one command per
   line, in the order they are typed), and an **Expected Output** block.
 * **Commands** must end with `bye` so the program exits cleanly.
@@ -911,6 +912,163 @@ ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] alpha
 2.[T][ ] beta
+____________________________________________________________
+
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+---
+
+## Test Case 16: Delete a task
+
+**Aim:** Verify that `delete <index>` removes the correct task, prints the
+confirmation message with the removed task's details, and that `list`
+afterwards shows the remaining tasks renumbered contiguously.
+
+**Commands:**
+```
+todo read book
+deadline return book /by Sunday
+todo borrow book
+list
+delete 2
+list
+bye
+```
+
+**Expected Output:**
+```
+____________________________________________________________
+ /$$$$$$$                                                   
+| $$__  $$                                                  
+| $$  \ $$ /$$   /$$ /$$$$$$$   /$$$$$$$  /$$$$$$  /$$$$$$$ 
+| $$  | $$| $$  | $$| $$__  $$ /$$_____/ |____  $$| $$__  $$
+| $$  | $$| $$  | $$| $$  \ $$| $$        /$$$$$$$| $$  \ $$
+| $$  | $$| $$  | $$| $$  | $$| $$       /$$__  $$| $$  | $$
+| $$$$$$$/|  $$$$$$/| $$  | $$|  $$$$$$$|  $$$$$$$| $$  | $$
+|_______/  \______/ |__/  |__/ \_______/ \_______/|__/  |__/
+
+Hello! I'm Duncan.
+What can I do for you?
+____________________________________________________________
+
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 3 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] read book
+2.[D][ ] return book (by: Sunday)
+3.[T][ ] borrow book
+____________________________________________________________
+
+____________________________________________________________
+Noted. I've removed this task:
+  [D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] read book
+2.[T][ ] borrow book
+____________________________________________________________
+
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+---
+
+## Test Case 17: Missing, invalid, or out-of-range task number on delete
+
+**Aim:** Verify that `delete` with a missing, non-numeric, or out-of-range
+task number reuses the same error message as `mark`/`unmark` instead of
+crashing, leaves the list untouched, and that a subsequent valid `delete`
+still works (including deleting the last remaining task down to zero).
+
+**Commands:**
+```
+todo read book
+delete
+delete abc
+delete 100
+delete 0
+list
+delete 1
+list
+bye
+```
+
+**Expected Output:**
+```
+____________________________________________________________
+ /$$$$$$$                                                   
+| $$__  $$                                                  
+| $$  \ $$ /$$   /$$ /$$$$$$$   /$$$$$$$  /$$$$$$  /$$$$$$$ 
+| $$  | $$| $$  | $$| $$__  $$ /$$_____/ |____  $$| $$__  $$
+| $$  | $$| $$  | $$| $$  \ $$| $$        /$$$$$$$| $$  \ $$
+| $$  | $$| $$  | $$| $$  | $$| $$       /$$__  $$| $$  | $$
+| $$$$$$$/|  $$$$$$/| $$  | $$|  $$$$$$$|  $$$$$$$| $$  | $$
+|_______/  \______/ |__/  |__/ \_______/ \_______/|__/  |__/
+
+Hello! I'm Duncan.
+What can I do for you?
+____________________________________________________________
+
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+HEY! this task number is bad
+____________________________________________________________
+
+____________________________________________________________
+HEY! this task number is bad
+____________________________________________________________
+
+____________________________________________________________
+HEY! this task number is bad
+____________________________________________________________
+
+____________________________________________________________
+HEY! this task number is bad
+____________________________________________________________
+
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] read book
+____________________________________________________________
+
+____________________________________________________________
+Noted. I've removed this task:
+  [T][ ] read book
+Now you have 0 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Here are the tasks in your list:
 ____________________________________________________________
 
 ____________________________________________________________

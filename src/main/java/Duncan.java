@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Duncan {
@@ -38,8 +39,7 @@ public class Duncan {
         System.out.println(horizontalLine);
         System.out.println();
 
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
@@ -53,22 +53,30 @@ public class Duncan {
                 switch (commandWord) {
                 case "list":
                     System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println((i + 1) + "." + tasks[i]);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + "." + tasks.get(i));
                     }
                     break;
                 case "mark": {
-                    int taskIndex = parseTaskIndex(rest, taskCount);
-                    tasks[taskIndex].markAsDone();
+                    int taskIndex = parseTaskIndex(rest, tasks.size());
+                    tasks.get(taskIndex).markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println("  " + tasks.get(taskIndex));
                     break;
                 }
                 case "unmark": {
-                    int taskIndex = parseTaskIndex(rest, taskCount);
-                    tasks[taskIndex].markAsNotDone();
+                    int taskIndex = parseTaskIndex(rest, tasks.size());
+                    tasks.get(taskIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println("  " + tasks.get(taskIndex));
+                    break;
+                }
+                case "delete": {
+                    int taskIndex = parseTaskIndex(rest, tasks.size());
+                    Task removedTask = tasks.remove(taskIndex);
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removedTask);
+                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
                     break;
                 }
                 case "todo": {
@@ -77,9 +85,8 @@ public class Duncan {
                         throw new DukeException("HEY! the description can't be left empty");
                     }
                     Task newTask = new Todo(description);
-                    tasks[taskCount] = newTask;
-                    taskCount++;
-                    printAddedTask(newTask, taskCount);
+                    tasks.add(newTask);
+                    printAddedTask(newTask, tasks.size());
                     break;
                 }
                 case "deadline": {
@@ -93,9 +100,8 @@ public class Duncan {
                         throw new DukeException("HEY! the description can't be left empty");
                     }
                     Task newTask = new Deadline(description, by);
-                    tasks[taskCount] = newTask;
-                    taskCount++;
-                    printAddedTask(newTask, taskCount);
+                    tasks.add(newTask);
+                    printAddedTask(newTask, tasks.size());
                     break;
                 }
                 case "event": {
@@ -111,9 +117,8 @@ public class Duncan {
                         throw new DukeException("HEY! the description can't be left empty");
                     }
                     Task newTask = new Event(description, from, to);
-                    tasks[taskCount] = newTask;
-                    taskCount++;
-                    printAddedTask(newTask, taskCount);
+                    tasks.add(newTask);
+                    printAddedTask(newTask, tasks.size());
                     break;
                 }
                 default:
