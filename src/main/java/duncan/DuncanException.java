@@ -5,6 +5,9 @@ package duncan;
  * input (e.g. an unrecognized command, a malformed task description).
  */
 public class DuncanException extends Exception {
+    /**
+     * @param message the user-facing explanation of what went wrong
+     */
     public DuncanException(String message) {
         super(message);
     }

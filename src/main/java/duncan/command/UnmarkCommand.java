@@ -9,6 +9,9 @@ import duncan.task.TaskList;
 public class UnmarkCommand extends Command {
     private final int taskIndex;
 
+    /**
+     * @param taskIndex the 0-based index of the task to mark as not done
+     */
     public UnmarkCommand(int taskIndex) {
         this.taskIndex = taskIndex;
     }

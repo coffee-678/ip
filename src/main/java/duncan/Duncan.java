@@ -16,6 +16,14 @@ public class Duncan {
     private final Storage storage;
     private final TaskList tasks;
 
+    /**
+     * Sets up a Duncan wired to the given save file: creates its {@link Ui},
+     * a {@link Storage} pointing at {@code filePath}, and loads the task
+     * list saved there (or an empty list, if there is none yet).
+     *
+     * @param filePath path to the save file, relative to the directory the
+     *                 program is run from
+     */
     public Duncan(String filePath) {
         this.ui = new Ui();
         this.storage = new Storage(filePath);
@@ -42,6 +50,7 @@ public class Duncan {
         }
     }
 
+    /** Program entry point: starts Duncan against the default save file. */
     public static void main(String[] args) {
         new Duncan(DATA_FILE_PATH).run();
     }
