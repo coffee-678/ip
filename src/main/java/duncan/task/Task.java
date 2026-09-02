@@ -1,3 +1,7 @@
+package duncan.task;
+
+import duncan.Storage;
+
 /**
  * Represents a task with a description and a done/not-done status.
  * Concrete task types (e.g. {@link Todo}, {@link Deadline}, {@link Event})

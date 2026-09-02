@@ -1,3 +1,11 @@
+package duncan.command;
+
+import duncan.DuncanException;
+import duncan.Storage;
+import duncan.Ui;
+import duncan.task.Task;
+import duncan.task.TaskList;
+
 /** Removes the task at a given 0-based index from the task list. */
 public class DeleteCommand extends Command {
     private final int taskIndex;
@@ -7,9 +15,9 @@ public class DeleteCommand extends Command {
     }
 
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
+    public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         if (!tasks.isValidIndex(taskIndex)) {
-            throw new DukeException("HEY! this task number is bad");
+            throw new DuncanException("HEY! this task number is bad");
         }
         Task removedTask = tasks.remove(taskIndex);
         storage.save(tasks.getTasks());

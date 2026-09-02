@@ -1,4 +1,9 @@
+package duncan.task;
+
 import java.util.ArrayList;
+
+import duncan.Storage;
+import duncan.Ui;
 
 /**
  * Holds the list of tasks and the operations that can be performed on it:

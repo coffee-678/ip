@@ -1,3 +1,8 @@
+package duncan;
+
+import duncan.command.Command;
+import duncan.task.TaskList;
+
 /**
  * A simple command-line task manager. Reads commands typed by the user in
  * a loop, carries each one out, and saves the task list to disk after
@@ -28,7 +33,7 @@ public class Duncan {
                 Command c = Parser.parse(fullCommand);
                 c.execute(tasks, ui, storage);
                 isExit = c.isExit();
-            } catch (DukeException e) {
+            } catch (DuncanException e) {
                 ui.showError(e.getMessage());
             } finally {
                 ui.showLine();

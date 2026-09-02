@@ -1,3 +1,5 @@
+package duncan;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -5,6 +7,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import duncan.task.Deadline;
+import duncan.task.Event;
+import duncan.task.Task;
+import duncan.task.Todo;
 
 /**
  * Loads the task list from a file on the hard disk when the program starts,

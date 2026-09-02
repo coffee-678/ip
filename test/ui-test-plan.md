@@ -32,7 +32,7 @@ actual output.
 ## Setup
 
 - **Source directory:** `src/main/java`
-- **Main class:** `Duncan`
+- **Main class:** `duncan.Duncan`
 - **Exit command:** `bye`
 
 ### Greeting

@@ -1,5 +1,18 @@
+package duncan;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import duncan.command.AddCommand;
+import duncan.command.Command;
+import duncan.command.DeleteCommand;
+import duncan.command.ExitCommand;
+import duncan.command.ListCommand;
+import duncan.command.MarkCommand;
+import duncan.command.UnmarkCommand;
+import duncan.task.Deadline;
+import duncan.task.Event;
+import duncan.task.Todo;
 
 /**
  * Makes sense of the raw text the user types: splits a line into a command
@@ -11,10 +24,10 @@ public class Parser {
      * Parses one full line of console input into the {@link Command} it
      * represents.
      *
-     * @throws DukeException if the line is not a recognised command, or a
+     * @throws DuncanException if the line is not a recognised command, or a
      *         recognised command's arguments are malformed
      */
-    public static Command parse(String fullCommand) throws DukeException {
+    public static Command parse(String fullCommand) throws DuncanException {
         String commandWord = getCommandWord(fullCommand);
         String rest = getArguments(fullCommand);
 
@@ -30,7 +43,7 @@ public class Parser {
         case "todo": {
             String description = rest.trim();
             if (description.isEmpty()) {
-                throw new DukeException("HEY! the description can't be left empty");
+                throw new DuncanException("HEY! the description can't be left empty");
             }
             return new AddCommand(new Todo(description));
         }
@@ -39,7 +52,7 @@ public class Parser {
             String description = parts[0].trim();
             LocalDate by = parseDate(parts[1]);
             if (description.isEmpty()) {
-                throw new DukeException("HEY! the description can't be left empty");
+                throw new DuncanException("HEY! the description can't be left empty");
             }
             return new AddCommand(new Deadline(description, by));
         }
@@ -49,14 +62,14 @@ public class Parser {
             LocalDate from = parseDate(parts[1]);
             LocalDate to = parseDate(parts[2]);
             if (description.isEmpty()) {
-                throw new DukeException("HEY! the description can't be left empty");
+                throw new DuncanException("HEY! the description can't be left empty");
             }
             return new AddCommand(new Event(description, from, to));
         }
         case "bye":
             return new ExitCommand();
         default:
-            throw new DukeException("HEY! idk what's that supposed to be");
+            throw new DuncanException("HEY! idk what's that supposed to be");
         }
     }
 
@@ -71,11 +84,11 @@ public class Parser {
         return parts.length > 1 ? parts[1] : "";
     }
 
-    private static LocalDate parseDate(String rest) throws DukeException {
+    private static LocalDate parseDate(String rest) throws DuncanException {
         try {
             return LocalDate.parse(rest.trim());
         } catch (DateTimeParseException e) {
-            throw new DukeException("HEY! dates must be in yyyy-mm-dd format");
+            throw new DuncanException("HEY! dates must be in yyyy-mm-dd format");
         }
     }
 
@@ -85,15 +98,15 @@ public class Parser {
      * number actually refers to a task in the current list is for the
      * command itself to check, since only it knows the list's current size.
      */
-    private static int parseTaskIndex(String rest) throws DukeException {
+    private static int parseTaskIndex(String rest) throws DuncanException {
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(rest.trim());
         } catch (NumberFormatException e) {
-            throw new DukeException("HEY! this task number is bad");
+            throw new DuncanException("HEY! this task number is bad");
         }
         if (taskNumber < 1) {
-            throw new DukeException("HEY! this task number is bad");
+            throw new DuncanException("HEY! this task number is bad");
         }
         return taskNumber - 1;
     }
@@ -103,10 +116,10 @@ public class Parser {
      *
      * @return a two-element array: the untrimmed description text, and the raw date text
      */
-    private static String[] splitDeadlineArgs(String rest) throws DukeException {
+    private static String[] splitDeadlineArgs(String rest) throws DuncanException {
         String[] parts = rest.split("/by ", 2);
         if (parts.length < 2) {
-            throw new DukeException("HEY! deadlines must have /by <date/time>");
+            throw new DuncanException("HEY! deadlines must have /by <date/time>");
         }
         return parts;
     }
@@ -117,11 +130,11 @@ public class Parser {
      * @return a three-element array: the trimmed description, the raw "from" date
      *         text, and the raw "to" date text
      */
-    private static String[] splitEventArgs(String rest) throws DukeException {
+    private static String[] splitEventArgs(String rest) throws DuncanException {
         int fromIndex = rest.indexOf("/from ");
         int toIndex = rest.indexOf("/to ");
         if (fromIndex == -1 || toIndex == -1) {
-            throw new DukeException("HEY! events must use /from and /to <date/time>");
+            throw new DuncanException("HEY! events must use /from and /to <date/time>");
         }
         return new String[] {
             rest.substring(0, fromIndex).trim(),
