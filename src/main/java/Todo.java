@@ -7,6 +7,11 @@ public class Todo extends Task {
     }
 
     @Override
+    public String toFileFormat() {
+        return "T" + FIELD_SEPARATOR + getSharedFileFields();
+    }
+
+    @Override
     public String toString() {
         return "[T]" + super.toString();
     }
