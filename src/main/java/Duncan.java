@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,6 +11,14 @@ public class Duncan {
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
         System.out.println("Now you have " + taskCount + " tasks in the list.");
+    }
+
+    private static LocalDate parseDate(String rest) throws DukeException {
+        try {
+            return LocalDate.parse(rest.trim());
+        } catch (DateTimeParseException e) {
+            throw new DukeException("HEY! dates must be in yyyy-mm-dd format");
+        }
     }
 
     private static int parseTaskIndex(String rest, int taskCount) throws DukeException {
@@ -105,7 +115,7 @@ public class Duncan {
                         throw new DukeException("HEY! deadlines must have /by <date/time>");
                     }
                     String description = parts[0].trim();
-                    String by = parts[1].trim();
+                    LocalDate by = parseDate(parts[1]);
                     if (description.isEmpty()) {
                         throw new DukeException("HEY! the description can't be left empty");
                     }
@@ -122,8 +132,8 @@ public class Duncan {
                         throw new DukeException("HEY! events must use /from and /to <date/time>");
                     }
                     String description = rest.substring(0, fromIndex).trim();
-                    String from = rest.substring(fromIndex + 6, toIndex).trim();
-                    String to = rest.substring(toIndex + 4).trim();
+                    LocalDate from = parseDate(rest.substring(fromIndex + 6, toIndex));
+                    LocalDate to = parseDate(rest.substring(toIndex + 4));
                     if (description.isEmpty()) {
                         throw new DukeException("HEY! the description can't be left empty");
                     }
