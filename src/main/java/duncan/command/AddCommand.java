@@ -13,10 +13,14 @@ import duncan.task.TaskList;
 public class AddCommand extends Command {
     private final Task task;
 
+    /**
+     * @param task the already-built task to add
+     */
     public AddCommand(Task task) {
         this.task = task;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         tasks.add(task);

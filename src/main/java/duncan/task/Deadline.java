@@ -15,16 +15,22 @@ public class Deadline extends Task {
 
     protected LocalDate by;
 
+    /**
+     * @param description what the task is, as typed by the user
+     * @param by          the date this task is due
+     */
     public Deadline(String description, LocalDate by) {
         super(description);
         this.by = by;
     }
 
+    /** Returns this deadline as a file line, e.g. "D\t0\treturn book\t2019-12-02". */
     @Override
     public String toFileFormat() {
         return "D" + FIELD_SEPARATOR + getSharedFileFields() + FIELD_SEPARATOR + by;
     }
 
+    /** Returns this deadline for display, e.g. "[D][ ] return book (by: Dec 2 2019)". */
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMAT) + ")";

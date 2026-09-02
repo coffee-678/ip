@@ -25,6 +25,7 @@ public class TaskList {
         this.tasks = tasks;
     }
 
+    /** Adds {@code task} to the end of the list. */
     public void add(Task task) {
         tasks.add(task);
     }
@@ -34,10 +35,12 @@ public class TaskList {
         return tasks.remove(index);
     }
 
+    /** Returns the task at {@code index}, without removing it. */
     public Task get(int index) {
         return tasks.get(index);
     }
 
+    /** Returns the number of tasks in the list. */
     public int size() {
         return tasks.size();
     }

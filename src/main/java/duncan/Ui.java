@@ -24,6 +24,7 @@ public class Ui {
 
     private final Scanner scanner;
 
+    /** Creates a Ui that reads console input from standard input. */
     public Ui() {
         this.scanner = new Scanner(System.in);
     }
@@ -62,6 +63,10 @@ public class Ui {
         return scanner.nextLine();
     }
 
+    /**
+     * Prints the current task list, numbered from 1 in the order the tasks
+     * were added.
+     */
     public void showTaskList(ArrayList<Task> tasks) {
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
@@ -69,22 +74,26 @@ public class Ui {
         }
     }
 
+    /** Reports that {@code task} was added, and how many tasks are in the list now. */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + taskCount + " tasks in the list.");
     }
 
+    /** Reports that {@code task} was marked as done. */
     public void showTaskMarked(Task task) {
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + task);
     }
 
+    /** Reports that {@code task} was marked as not done. */
     public void showTaskUnmarked(Task task) {
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + task);
     }
 
+    /** Reports that {@code task} was removed, and how many tasks are left. */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + task);
