@@ -407,6 +407,126 @@ HEY! this task number is bad
 ____________________________________________________________
 ```
 
+### TC14: Find tasks matching a keyword
+
+**Aim:** Check that `find` shows only the tasks whose description contains
+the keyword, numbered from 1 within the matches (not their original
+position in the full list).
+
+**Input:**
+
+```text
+todo read book
+deadline return book /by 2019-12-02
+event project fair /from 2019-12-01 /to 2019-12-02
+find book
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Dec 2 2019)
+Now you have 2 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)
+Now you have 3 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Here are the matching tasks in your list:
+1.[T][ ] read book
+2.[D][ ] return book (by: Dec 2 2019)
+____________________________________________________________
+```
+
+### TC15: Find with no matches
+
+**Aim:** Check that `find` reports an empty matching list rather than an
+error when no task's description contains the keyword.
+
+**Input:**
+
+```text
+todo read book
+find nonexistent
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Here are the matching tasks in your list:
+____________________________________________________________
+```
+
+### TC16: Find with an empty keyword
+
+**Aim:** Check that a find with nothing after the command word is
+rejected, and that the session carries on afterwards.
+
+**Input:**
+
+```text
+find
+list
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+HEY! the keyword can't be left empty
+____________________________________________________________
+
+____________________________________________________________
+Here are the tasks in your list:
+____________________________________________________________
+```
+
+### TC17: Find is case-insensitive
+
+**Aim:** Check that `find` matches regardless of the case typed, e.g.
+"BOOK" still matches a task described as "read book".
+
+**Input:**
+
+```text
+todo read book
+find BOOK
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Here are the matching tasks in your list:
+1.[T][ ] read book
+____________________________________________________________
+```
+
 ## Not covered by this plan
 
 - **Saving and loading between runs.** Every case runs in its own empty

@@ -50,6 +50,17 @@ public class TaskList {
         return index >= 0 && index < tasks.size();
     }
 
+    /** Returns the tasks whose description contains {@code keyword} (case-insensitive). */
+    public ArrayList<Task> find(String keyword) {
+        ArrayList<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                matches.add(task);
+            }
+        }
+        return matches;
+    }
+
     /** Returns the underlying list, e.g. for {@link Storage} to save or {@link Ui} to display. */
     public ArrayList<Task> getTasks() {
         return tasks;
