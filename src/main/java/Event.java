@@ -15,6 +15,12 @@ public class Event extends Task {
     }
 
     @Override
+    public String toFileFormat() {
+        return "E" + FIELD_SEPARATOR + getSharedFileFields()
+                + FIELD_SEPARATOR + from + FIELD_SEPARATOR + to;
+    }
+
+    @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
     }

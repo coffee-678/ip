@@ -12,6 +12,11 @@ public class Deadline extends Task {
     }
 
     @Override
+    public String toFileFormat() {
+        return "D" + FIELD_SEPARATOR + getSharedFileFields() + FIELD_SEPARATOR + by;
+    }
+
+    @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by + ")";
     }
