@@ -1,17 +1,10 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Duncan {
     /** Where the task list is kept between runs, relative to the project root. */
     private static final String DATA_FILE_PATH = "data/duncan.txt";
-
-    private static void printAddedTask(Task newTask, int taskCount) {
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + newTask);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-    }
 
     private static LocalDate parseDate(String rest) throws DukeException {
         try {
@@ -35,32 +28,17 @@ public class Duncan {
     }
 
     public static void main(String[] args) {
-        String banner = " /$$$$$$$                                                   \n"
-                + "| $$__  $$                                                  \n"
-                + "| $$  \\ $$ /$$   /$$ /$$$$$$$   /$$$$$$$  /$$$$$$  /$$$$$$$ \n"
-                + "| $$  | $$| $$  | $$| $$__  $$ /$$_____/ |____  $$| $$__  $$\n"
-                + "| $$  | $$| $$  | $$| $$  \\ $$| $$        /$$$$$$$| $$  \\ $$\n"
-                + "| $$  | $$| $$  | $$| $$  | $$| $$       /$$__  $$| $$  | $$\n"
-                + "| $$$$$$$/|  $$$$$$/| $$  | $$|  $$$$$$$|  $$$$$$$| $$  | $$\n"
-                + "|_______/  \\______/ |__/  |__/ \\_______/ \\_______/|__/  |__/\n";
-        String horizontalLine = "____________________________________________________________";
-
-        System.out.println(horizontalLine);
-        System.out.println(banner);
-        System.out.println("Hello! I'm Duncan.");
-        System.out.println("What can I do for you?");
-        System.out.println(horizontalLine);
-        System.out.println();
+        Ui ui = new Ui();
+        ui.showWelcome();
 
         // Pick up where the previous run left off; an empty list if there
         // is no save file yet.
         Storage storage = new Storage(DATA_FILE_PATH);
         ArrayList<Task> tasks = storage.load();
 
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        String input = ui.readCommand();
         while (!input.equals("bye")) {
-            System.out.println(horizontalLine);
+            ui.printDivider();
             try {
                 String[] inputParts = input.split(" ", 2);
                 String commandWord = inputParts[0];
@@ -68,34 +46,27 @@ public class Duncan {
 
                 switch (commandWord) {
                 case "list":
-                    System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println((i + 1) + "." + tasks.get(i));
-                    }
+                    ui.showTaskList(tasks);
                     break;
                 case "mark": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsDone();
                     storage.save(tasks);
-                    System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks.get(taskIndex));
+                    ui.showTaskMarked(tasks.get(taskIndex));
                     break;
                 }
                 case "unmark": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
                     storage.save(tasks);
-                    System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks.get(taskIndex));
+                    ui.showTaskUnmarked(tasks.get(taskIndex));
                     break;
                 }
                 case "delete": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     storage.save(tasks);
-                    System.out.println("Noted. I've removed this task:");
-                    System.out.println("  " + removedTask);
-                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+                    ui.showTaskDeleted(removedTask, tasks.size());
                     break;
                 }
                 case "todo": {
@@ -106,7 +77,7 @@ public class Duncan {
                     Task newTask = new Todo(description);
                     tasks.add(newTask);
                     storage.save(tasks);
-                    printAddedTask(newTask, tasks.size());
+                    ui.showTaskAdded(newTask, tasks.size());
                     break;
                 }
                 case "deadline": {
@@ -122,7 +93,7 @@ public class Duncan {
                     Task newTask = new Deadline(description, by);
                     tasks.add(newTask);
                     storage.save(tasks);
-                    printAddedTask(newTask, tasks.size());
+                    ui.showTaskAdded(newTask, tasks.size());
                     break;
                 }
                 case "event": {
@@ -140,22 +111,20 @@ public class Duncan {
                     Task newTask = new Event(description, from, to);
                     tasks.add(newTask);
                     storage.save(tasks);
-                    printAddedTask(newTask, tasks.size());
+                    ui.showTaskAdded(newTask, tasks.size());
                     break;
                 }
                 default:
                     throw new DukeException("HEY! idk what's that supposed to be");
                 }
             } catch (DukeException e) {
-                System.out.println(e.getMessage());
+                ui.showError(e.getMessage());
             }
-            System.out.println(horizontalLine);
-            System.out.println();
-            input = scanner.nextLine();
+            ui.printDivider();
+            ui.printBlankLine();
+            input = ui.readCommand();
         }
 
-        System.out.println(horizontalLine);
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(horizontalLine);
+        ui.showGoodbye();
     }
 }
