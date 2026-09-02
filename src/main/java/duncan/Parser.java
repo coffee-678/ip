@@ -84,6 +84,11 @@ public class Parser {
         return parts.length > 1 ? parts[1] : "";
     }
 
+    /**
+     * Parses a date typed by the user, e.g. "2019-12-02".
+     *
+     * @throws DuncanException if the text is not a valid yyyy-mm-dd date
+     */
     private static LocalDate parseDate(String rest) throws DuncanException {
         try {
             return LocalDate.parse(rest.trim());

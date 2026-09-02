@@ -16,6 +16,7 @@ public class UnmarkCommand extends Command {
         this.taskIndex = taskIndex;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         if (!tasks.isValidIndex(taskIndex)) {
