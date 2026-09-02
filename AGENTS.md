@@ -30,10 +30,18 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 ## Git
 
-Use lightweight tags unless the user requests an annotated tag.
-Always merge branches with `--no-ff` (e.g. `git merge --no-ff branch-name`), so that every merge creates an explicit merge commit and the branch's history stays visible in the commit graph.
-When proposing or creating a commit message, include enough detail to explain the rationale for the change.
-Do not commit or push unless explicitly asked.
+* Use lightweight tags unless the user requests an annotated tag.
+* Always merge branches with `--no-ff` (e.g. `git merge --no-ff branch-name`), so that every merge creates an explicit merge commit and the branch's history stays visible in the commit graph.
+* Do not commit or push unless explicitly asked.
+
+When proposing or creating a commit message, follow the rules below. They are complete — do not fetch the source page.
+Reference only: https://se-education.org/guides/conventions/git.html
+* Subject: imperative mood, capitalised, no trailing period, under 50 chars (72 hard limit). Optional `Scope: ` prefix, e.g. `Storage: Handle missing data folder`.
+* Non-trivial commits need a body: blank line after subject, wrapped at 72 chars.
+* Body structure: current situation (present tense), why it needs to change, what is being done (imperative), why that way.
+* Explain WHAT and WHY, not HOW. Avoid 'currently' and 'originally' — they're implied.
+* If the body is getting long, that's a sign the commit should be split into finer-grained commits — propose the split rather than writing one large commit.
+* Never edit or amend a pushed commit message.
 
 ## Implementation
 
