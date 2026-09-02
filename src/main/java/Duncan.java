@@ -1,30 +1,8 @@
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 public class Duncan {
     /** Where the task list is kept between runs, relative to the project root. */
     private static final String DATA_FILE_PATH = "data/duncan.txt";
-
-    private static LocalDate parseDate(String rest) throws DukeException {
-        try {
-            return LocalDate.parse(rest.trim());
-        } catch (DateTimeParseException e) {
-            throw new DukeException("HEY! dates must be in yyyy-mm-dd format");
-        }
-    }
-
-    private static int parseTaskIndex(String rest, int taskCount) throws DukeException {
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(rest.trim());
-        } catch (NumberFormatException e) {
-            throw new DukeException("HEY! this task number is bad");
-        }
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new DukeException("HEY! this task number is bad");
-        }
-        return taskNumber - 1;
-    }
 
     public static void main(String[] args) {
         Ui ui = new Ui();
@@ -39,30 +17,29 @@ public class Duncan {
         while (!input.equals("bye")) {
             ui.printDivider();
             try {
-                String[] inputParts = input.split(" ", 2);
-                String commandWord = inputParts[0];
-                String rest = inputParts.length > 1 ? inputParts[1] : "";
+                String commandWord = Parser.getCommandWord(input);
+                String rest = Parser.getArguments(input);
 
                 switch (commandWord) {
                 case "list":
                     ui.showTaskList(tasks.getTasks());
                     break;
                 case "mark": {
-                    int taskIndex = parseTaskIndex(rest, tasks.size());
+                    int taskIndex = Parser.parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsDone();
                     storage.save(tasks.getTasks());
                     ui.showTaskMarked(tasks.get(taskIndex));
                     break;
                 }
                 case "unmark": {
-                    int taskIndex = parseTaskIndex(rest, tasks.size());
+                    int taskIndex = Parser.parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
                     storage.save(tasks.getTasks());
                     ui.showTaskUnmarked(tasks.get(taskIndex));
                     break;
                 }
                 case "delete": {
-                    int taskIndex = parseTaskIndex(rest, tasks.size());
+                    int taskIndex = Parser.parseTaskIndex(rest, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     storage.save(tasks.getTasks());
                     ui.showTaskDeleted(removedTask, tasks.size());
@@ -80,12 +57,9 @@ public class Duncan {
                     break;
                 }
                 case "deadline": {
-                    String[] parts = rest.split("/by ", 2);
-                    if (parts.length < 2) {
-                        throw new DukeException("HEY! deadlines must have /by <date/time>");
-                    }
+                    String[] parts = Parser.splitDeadlineArgs(rest);
                     String description = parts[0].trim();
-                    LocalDate by = parseDate(parts[1]);
+                    LocalDate by = Parser.parseDate(parts[1]);
                     if (description.isEmpty()) {
                         throw new DukeException("HEY! the description can't be left empty");
                     }
@@ -96,14 +70,10 @@ public class Duncan {
                     break;
                 }
                 case "event": {
-                    int fromIndex = rest.indexOf("/from ");
-                    int toIndex = rest.indexOf("/to ");
-                    if (fromIndex == -1 || toIndex == -1) {
-                        throw new DukeException("HEY! events must use /from and /to <date/time>");
-                    }
-                    String description = rest.substring(0, fromIndex).trim();
-                    LocalDate from = parseDate(rest.substring(fromIndex + 6, toIndex));
-                    LocalDate to = parseDate(rest.substring(toIndex + 4));
+                    String[] parts = Parser.splitEventArgs(rest);
+                    String description = parts[0];
+                    LocalDate from = Parser.parseDate(parts[1]);
+                    LocalDate to = Parser.parseDate(parts[2]);
                     if (description.isEmpty()) {
                         throw new DukeException("HEY! the description can't be left empty");
                     }
