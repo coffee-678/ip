@@ -1,3 +1,8 @@
+package duncan;
+
+import duncan.command.Command;
+import duncan.task.TaskList;
+
 /**
  * A simple command-line task manager. Reads commands typed by the user in
  * a loop, carries each one out, and saves the task list to disk after

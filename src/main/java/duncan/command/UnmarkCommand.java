@@ -1,3 +1,10 @@
+package duncan.command;
+
+import duncan.DukeException;
+import duncan.Storage;
+import duncan.Ui;
+import duncan.task.TaskList;
+
 /** Marks the task at a given 0-based index as not done. */
 public class UnmarkCommand extends Command {
     private final int taskIndex;

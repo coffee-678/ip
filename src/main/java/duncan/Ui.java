@@ -1,5 +1,9 @@
+package duncan;
+
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import duncan.task.Task;
 
 /**
  * Handles all interaction with the user: everything the program prints to

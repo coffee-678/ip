@@ -1,3 +1,5 @@
+package duncan.task;
+
 /**
  * Represents a task with no date/time attached, e.g. "borrow book".
  */

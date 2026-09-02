@@ -1,5 +1,18 @@
+package duncan;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import duncan.command.AddCommand;
+import duncan.command.Command;
+import duncan.command.DeleteCommand;
+import duncan.command.ExitCommand;
+import duncan.command.ListCommand;
+import duncan.command.MarkCommand;
+import duncan.command.UnmarkCommand;
+import duncan.task.Deadline;
+import duncan.task.Event;
+import duncan.task.Todo;
 
 /**
  * Makes sense of the raw text the user types: splits a line into a command

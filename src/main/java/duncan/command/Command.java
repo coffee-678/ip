@@ -1,3 +1,10 @@
+package duncan.command;
+
+import duncan.DukeException;
+import duncan.Storage;
+import duncan.Ui;
+import duncan.task.TaskList;
+
 /**
  * Represents one user command, already parsed and ready to run. Each kind
  * of command (adding a task, marking one done, exiting, etc.) is its own

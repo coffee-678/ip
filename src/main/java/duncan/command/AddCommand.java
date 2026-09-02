@@ -1,6 +1,14 @@
+package duncan.command;
+
+import duncan.DukeException;
+import duncan.Storage;
+import duncan.Ui;
+import duncan.task.Task;
+import duncan.task.TaskList;
+
 /**
- * Adds one already-built task (a {@link Todo}, {@link Deadline}, or
- * {@link Event}) to the task list.
+ * Adds one already-built task (a {@link duncan.task.Todo}, {@link duncan.task.Deadline}, or
+ * {@link duncan.task.Event}) to the task list.
  */
 public class AddCommand extends Command {
     private final Task task;
