@@ -28,20 +28,18 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
 
+## Coding standard
+
+All Java code in this project (new code and edits to existing code) must follow the `seedu-java-coding-standard` skill: naming, layout, statement style, and comment rules. Invoke it whenever writing, editing, or reviewing a `.java` file.
+
 ## Git
 
 * Use lightweight tags unless the user requests an annotated tag.
 * Always merge branches with `--no-ff` (e.g. `git merge --no-ff branch-name`), so that every merge creates an explicit merge commit and the branch's history stays visible in the commit graph.
 * Do not commit or push unless explicitly asked.
-
-When proposing or creating a commit message, follow the rules below. They are complete — do not fetch the source page.
-Reference only: https://se-education.org/guides/conventions/git.html
-* Subject: imperative mood, capitalised, no trailing period, under 50 chars (72 hard limit). Optional `Scope: ` prefix, e.g. `Storage: Handle missing data folder`.
-* Non-trivial commits need a body: blank line after subject, wrapped at 72 chars.
-* Body structure: current situation (present tense), why it needs to change, what is being done (imperative), why that way.
-* Explain WHAT and WHY, not HOW. Avoid 'currently' and 'originally' — they're implied.
-* If the body is getting long, that's a sign the commit should be split into finer-grained commits — propose the split rather than writing one large commit.
 * Never edit or amend a pushed commit message.
+
+All commit messages and branch names must follow the `seedu-git-standard` skill. Invoke it whenever proposing a commit message or naming a branch.
 
 ## Implementation
 
