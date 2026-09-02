@@ -69,6 +69,14 @@ public class Ui {
         }
     }
 
+    /** Prints the tasks matching a find command's keyword, numbered from 1. */
+    public void showMatchingTasks(ArrayList<Task> matches) {
+        System.out.println("Here are the matching tasks in your list:");
+        for (int i = 0; i < matches.size(); i++) {
+            System.out.println((i + 1) + "." + matches.get(i));
+        }
+    }
+
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);

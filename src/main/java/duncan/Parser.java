@@ -7,6 +7,7 @@ import duncan.command.AddCommand;
 import duncan.command.Command;
 import duncan.command.DeleteCommand;
 import duncan.command.ExitCommand;
+import duncan.command.FindCommand;
 import duncan.command.ListCommand;
 import duncan.command.MarkCommand;
 import duncan.command.UnmarkCommand;
@@ -34,6 +35,13 @@ public class Parser {
         switch (commandWord) {
         case "list":
             return new ListCommand();
+        case "find": {
+            String keyword = rest.trim();
+            if (keyword.isEmpty()) {
+                throw new DuncanException("HEY! the keyword can't be left empty");
+            }
+            return new FindCommand(keyword);
+        }
         case "mark":
             return new MarkCommand(parseTaskIndex(rest));
         case "unmark":
