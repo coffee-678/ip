@@ -48,3 +48,8 @@ Reference only: https://se-education.org/guides/conventions/git.html
 * When implementing a stated requirement, implement only what's asked. If existing code won't compile without handling a case outside the stated requirement, stop and ask rather than filling the gap with your own design choice.
 
 * If you introduce a user-facing string, command name, or class name that does not appear in this repo or in the prompt, say so explicitly in your response rather than adding it silently.
+
+## Testing
+
+* Target ~50% JUnit test coverage, focused on the highest-value methods: complex, core, or critical business logic (e.g. parsing/validation, command execution, persistence round-trips, domain formatting). Deprioritize thin I/O wrappers, the program's entry point/main loop, and trivial one-line methods.
+* After any code change, update the JUnit tests so coverage of the affected logic stays at that target — add tests for new logic, and fix or extend existing tests for changed logic, rather than letting them go stale.
