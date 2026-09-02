@@ -1,6 +1,5 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 
 public class Duncan {
     /** Where the task list is kept between runs, relative to the project root. */
@@ -34,7 +33,7 @@ public class Duncan {
         // Pick up where the previous run left off; an empty list if there
         // is no save file yet.
         Storage storage = new Storage(DATA_FILE_PATH);
-        ArrayList<Task> tasks = storage.load();
+        TaskList tasks = new TaskList(storage.load());
 
         String input = ui.readCommand();
         while (!input.equals("bye")) {
@@ -46,26 +45,26 @@ public class Duncan {
 
                 switch (commandWord) {
                 case "list":
-                    ui.showTaskList(tasks);
+                    ui.showTaskList(tasks.getTasks());
                     break;
                 case "mark": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsDone();
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                     ui.showTaskMarked(tasks.get(taskIndex));
                     break;
                 }
                 case "unmark": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                     ui.showTaskUnmarked(tasks.get(taskIndex));
                     break;
                 }
                 case "delete": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                     ui.showTaskDeleted(removedTask, tasks.size());
                     break;
                 }
@@ -76,7 +75,7 @@ public class Duncan {
                     }
                     Task newTask = new Todo(description);
                     tasks.add(newTask);
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                     ui.showTaskAdded(newTask, tasks.size());
                     break;
                 }
@@ -92,7 +91,7 @@ public class Duncan {
                     }
                     Task newTask = new Deadline(description, by);
                     tasks.add(newTask);
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                     ui.showTaskAdded(newTask, tasks.size());
                     break;
                 }
@@ -110,7 +109,7 @@ public class Duncan {
                     }
                     Task newTask = new Event(description, from, to);
                     tasks.add(newTask);
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                     ui.showTaskAdded(newTask, tasks.size());
                     break;
                 }
