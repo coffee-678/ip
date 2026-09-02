@@ -1,6 +1,6 @@
 package duncan.command;
 
-import duncan.DukeException;
+import duncan.DuncanException;
 import duncan.Storage;
 import duncan.Ui;
 import duncan.task.TaskList;
@@ -8,7 +8,7 @@ import duncan.task.TaskList;
 /** Says goodbye and signals the main loop to stop. */
 public class ExitCommand extends Command {
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
+    public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         ui.showGoodbye();
     }
 

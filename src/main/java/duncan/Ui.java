@@ -91,7 +91,7 @@ public class Ui {
         System.out.println("Now you have " + taskCount + " tasks in the list.");
     }
 
-    /** Prints the message of a {@link DukeException} caught from a bad command. */
+    /** Prints the message of a {@link DuncanException} caught from a bad command. */
     public void showError(String message) {
         System.out.println(message);
     }

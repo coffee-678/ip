@@ -33,7 +33,7 @@ public class Duncan {
                 Command c = Parser.parse(fullCommand);
                 c.execute(tasks, ui, storage);
                 isExit = c.isExit();
-            } catch (DukeException e) {
+            } catch (DuncanException e) {
                 ui.showError(e.getMessage());
             } finally {
                 ui.showLine();

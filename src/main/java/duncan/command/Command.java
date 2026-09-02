@@ -1,6 +1,6 @@
 package duncan.command;
 
-import duncan.DukeException;
+import duncan.DuncanException;
 import duncan.Storage;
 import duncan.Ui;
 import duncan.task.TaskList;
@@ -16,10 +16,10 @@ public abstract class Command {
      * the result through {@code ui}, and persists any change through
      * {@code storage}.
      *
-     * @throws DukeException if the command cannot be carried out, e.g. a
+     * @throws DuncanException if the command cannot be carried out, e.g. a
      *         task number that is out of range
      */
-    public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException;
+    public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException;
 
     /** Whether this command should end the program's main loop. */
     public boolean isExit() {

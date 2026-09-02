@@ -1,6 +1,6 @@
 package duncan.command;
 
-import duncan.DukeException;
+import duncan.DuncanException;
 import duncan.Storage;
 import duncan.Ui;
 import duncan.task.Task;
@@ -18,7 +18,7 @@ public class AddCommand extends Command {
     }
 
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) throws DukeException {
+    public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         tasks.add(task);
         storage.save(tasks.getTasks());
         ui.showTaskAdded(task, tasks.size());
