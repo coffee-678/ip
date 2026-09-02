@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Duncan {
+    /** Where the task list is kept between runs, relative to the project root. */
+    private static final String DATA_FILE_PATH = "data/duncan.txt";
+
     private static void printAddedTask(Task newTask, int taskCount) {
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + newTask);
@@ -39,7 +42,10 @@ public class Duncan {
         System.out.println(horizontalLine);
         System.out.println();
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        // Pick up where the previous run left off; an empty list if there
+        // is no save file yet.
+        Storage storage = new Storage(DATA_FILE_PATH);
+        ArrayList<Task> tasks = storage.load();
 
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
@@ -60,6 +66,7 @@ public class Duncan {
                 case "mark": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsDone();
+                    storage.save(tasks);
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
                     break;
@@ -67,6 +74,7 @@ public class Duncan {
                 case "unmark": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
+                    storage.save(tasks);
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(taskIndex));
                     break;
@@ -74,6 +82,7 @@ public class Duncan {
                 case "delete": {
                     int taskIndex = parseTaskIndex(rest, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    storage.save(tasks);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -86,6 +95,7 @@ public class Duncan {
                     }
                     Task newTask = new Todo(description);
                     tasks.add(newTask);
+                    storage.save(tasks);
                     printAddedTask(newTask, tasks.size());
                     break;
                 }
@@ -101,6 +111,7 @@ public class Duncan {
                     }
                     Task newTask = new Deadline(description, by);
                     tasks.add(newTask);
+                    storage.save(tasks);
                     printAddedTask(newTask, tasks.size());
                     break;
                 }
@@ -118,6 +129,7 @@ public class Duncan {
                     }
                     Task newTask = new Event(description, from, to);
                     tasks.add(newTask);
+                    storage.save(tasks);
                     printAddedTask(newTask, tasks.size());
                     break;
                 }
