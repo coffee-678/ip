@@ -37,6 +37,11 @@ public class TaskList {
         return tasks.size();
     }
 
+    /** Whether {@code index} refers to an actual task in this list. */
+    public boolean isValidIndex(int index) {
+        return index >= 0 && index < tasks.size();
+    }
+
     /** Returns the underlying list, e.g. for {@link Storage} to save or {@link Ui} to display. */
     public ArrayList<Task> getTasks() {
         return tasks;

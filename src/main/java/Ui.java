@@ -26,28 +26,30 @@ public class Ui {
 
     /** Prints the banner and greeting shown when the program starts. */
     public void showWelcome() {
-        printDivider();
+        showLine();
         System.out.println(BANNER);
         System.out.println("Hello! I'm Duncan.");
         System.out.println("What can I do for you?");
-        printDivider();
-        printBlankLine();
+        showLine();
+        showBlankLine();
     }
 
-    /** Prints the farewell shown when the program exits. */
+    /**
+     * Prints the farewell shown when the program exits. Like every other
+     * command's result, this relies on the main loop to print the dividers
+     * around it.
+     */
     public void showGoodbye() {
-        printDivider();
         System.out.println("Bye. Hope to see you again soon!");
-        printDivider();
     }
 
     /** Prints the horizontal rule used to separate sections of output. */
-    public void printDivider() {
+    public void showLine() {
         System.out.println(HORIZONTAL_LINE);
     }
 
     /** Prints a blank line, used to visually separate command responses. */
-    public void printBlankLine() {
+    public void showBlankLine() {
         System.out.println();
     }
 
