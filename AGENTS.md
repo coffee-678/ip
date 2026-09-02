@@ -31,18 +31,12 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
+Always merge branches with `--no-ff` (e.g. `git merge --no-ff branch-name`), so that every merge creates an explicit merge commit and the branch's history stays visible in the commit graph.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
 
-## Testing
-
-After making any code change (e.g. to `src/main/java/`), before considering the task done:
-
-1. Update `test/ui-test-plan.md` if the change affects program behavior — add test cases for new features, and update the **Expected Output** of any existing test case whose output the change altered.
-2. Invoke the `test-ui` skill to run the UI test plan and confirm it passes.
-
-If `test-ui` reports a failure, treat it as a bug to fix (in the code or in the test plan, whichever is wrong) before reporting the task as complete.
+## Implementation
 
 * When implementing a stated requirement, implement only what's asked. If existing code won't compile without handling a case outside the stated requirement, stop and ask rather than filling the gap with your own design choice.
 
-* Never introduce content (error strings, command names, design patterns) because it's recognizable from CS2103/iP reference implementations or teaching materials. Derive everything from this repo's actual code and the requirement given in the prompt.
+* If you introduce a user-facing string, command name, or class name that does not appear in this repo or in the prompt, say so explicitly in your response rather than adding it silently.
