@@ -1,12 +1,19 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
- * Represents a task that needs to be done before a specific date/time,
- * e.g. "return book by Sunday". The date/time is stored as-is, as a
- * String, without any parsing or validation.
+ * Represents a task that needs to be done before a specific date,
+ * e.g. "return book by 2019-12-02". The date is stored as a
+ * {@link LocalDate}, so it is validated on input and can be displayed
+ * in a friendlier format than it was typed in.
  */
 public class Deadline extends Task {
-    protected String by;
+    /** Format the date is displayed in, e.g. "Dec 2 2019". */
+    private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy");
 
-    public Deadline(String description, String by) {
+    protected LocalDate by;
+
+    public Deadline(String description, LocalDate by) {
         super(description);
         this.by = by;
     }
@@ -18,6 +25,6 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMAT) + ")";
     }
 }

@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,13 +14,15 @@ import java.util.Scanner;
  * <p>Each task occupies one line of the file, with its fields separated by
  * tab characters. The first field is the task type ("T", "D" or "E"), the
  * second is the done status ("1" for done, "0" for not done), the third is
- * the description, and any further fields are that type's date/time
- * details. Written out with the tabs shown as arrows, a file looks like:
+ * the description, and any further fields are that type's date details,
+ * written in ISO-8601 form (yyyy-mm-dd) since that is both
+ * {@link LocalDate}'s default text form and the format tasks are typed
+ * in. Written out with the tabs shown as arrows, a file looks like:
  *
  * <pre>
  * T &#8594; 1 &#8594; borrow book
- * D &#8594; 0 &#8594; return book &#8594; Sunday
- * E &#8594; 0 &#8594; project meeting &#8594; Mon 2pm &#8594; 4pm
+ * D &#8594; 0 &#8594; return book &#8594; 2019-12-02
+ * E &#8594; 0 &#8594; project fair &#8594; 2019-12-01 &#8594; 2019-12-02
  * </pre>
  *
  * <p>A tab is used as the separator because it is not something a user can
@@ -99,10 +102,10 @@ public class Storage {
         Task task;
         switch (type) {
         case "D":
-            task = new Deadline(description, fields[3]);
+            task = new Deadline(description, LocalDate.parse(fields[3]));
             break;
         case "E":
-            task = new Event(description, fields[3], fields[4]);
+            task = new Event(description, LocalDate.parse(fields[3]), LocalDate.parse(fields[4]));
             break;
         default: // "T"
             task = new Todo(description);

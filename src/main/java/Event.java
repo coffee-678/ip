@@ -1,14 +1,20 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
- * Represents a task that starts at a specific date/time and ends at a
- * specific date/time, e.g. "project meeting from Mon 2pm to 4pm". The
- * date/times are stored as-is, as Strings, without any parsing or
- * validation.
+ * Represents a task that starts on a specific date and ends on a
+ * specific date, e.g. "project fair from 2019-12-01 to 2019-12-02".
+ * The dates are stored as {@link LocalDate}, so they are validated on
+ * input and can be displayed in a friendlier format than typed in.
  */
 public class Event extends Task {
-    protected String from;
-    protected String to;
+    /** Format the dates are displayed in, e.g. "Dec 2 2019". */
+    private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy");
 
-    public Event(String description, String from, String to) {
+    protected LocalDate from;
+    protected LocalDate to;
+
+    public Event(String description, LocalDate from, LocalDate to) {
         super(description);
         this.from = from;
         this.to = to;
@@ -22,6 +28,7 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
+        return "[E]" + super.toString() + " (from: " + from.format(DISPLAY_FORMAT)
+                + " to: " + to.format(DISPLAY_FORMAT) + ")";
     }
 }
