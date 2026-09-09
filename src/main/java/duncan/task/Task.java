@@ -8,6 +8,9 @@ import duncan.Storage;
  * extend this class to add their own scheduling details.
  */
 public abstract class Task {
+    /** Separates the fields within one task's line in the save file. */
+    public static final String FIELD_SEPARATOR = "\t";
+
     protected String description;
     protected boolean isDone;
 
@@ -18,9 +21,6 @@ public abstract class Task {
         this.description = description;
         this.isDone = false;
     }
-
-    /** Separates the fields within one task's line in the save file. */
-    public static final String FIELD_SEPARATOR = "\t";
 
     /** Returns "X" if this task is done, or a single space if it is not. */
     public String getStatusIcon() {
