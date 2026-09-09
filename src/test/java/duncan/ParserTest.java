@@ -68,8 +68,8 @@ public class ParserTest {
 
     @Test
     public void parse_deadlineInvalidDateFormat_exceptionThrown() {
-        DuncanException e = assertThrows(DuncanException.class,
-                () -> Parser.parse("deadline return book /by not-a-date"));
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("deadline return book /by not-a-date"));
 
         assertEquals("HEY! dates must be in yyyy-mm-dd format", e.getMessage());
     }
@@ -91,32 +91,32 @@ public class ParserTest {
 
     @Test
     public void parse_eventMissingFrom_exceptionThrown() {
-        DuncanException e = assertThrows(DuncanException.class,
-                () -> Parser.parse("event project fair /to 2019-12-02"));
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("event project fair /to 2019-12-02"));
 
         assertEquals("HEY! events must use /from and /to <date/time>", e.getMessage());
     }
 
     @Test
     public void parse_eventMissingTo_exceptionThrown() {
-        DuncanException e = assertThrows(DuncanException.class,
-                () -> Parser.parse("event project fair /from 2019-12-01"));
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("event project fair /from 2019-12-01"));
 
         assertEquals("HEY! events must use /from and /to <date/time>", e.getMessage());
     }
 
     @Test
     public void parse_eventInvalidDateFormat_exceptionThrown() {
-        DuncanException e = assertThrows(DuncanException.class,
-                () -> Parser.parse("event project fair /from not-a-date /to 2019-12-02"));
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("event project fair /from not-a-date /to 2019-12-02"));
 
         assertEquals("HEY! dates must be in yyyy-mm-dd format", e.getMessage());
     }
 
     @Test
     public void parse_eventEmptyDescription_exceptionThrown() {
-        DuncanException e = assertThrows(DuncanException.class,
-                () -> Parser.parse("event /from 2019-12-01 /to 2019-12-02"));
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("event /from 2019-12-01 /to 2019-12-02"));
 
         assertEquals("HEY! the description can't be left empty", e.getMessage());
     }
