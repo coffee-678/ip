@@ -108,15 +108,15 @@ public class Storage {
 
         Task task;
         switch (type) {
-        case "D":
-            task = new Deadline(description, LocalDate.parse(fields[3]));
-            break;
-        case "E":
-            task = new Event(description, LocalDate.parse(fields[3]), LocalDate.parse(fields[4]));
-            break;
-        default: // "T"
-            task = new Todo(description);
-            break;
+            case "D":
+                task = new Deadline(description, LocalDate.parse(fields[3]));
+                break;
+            case "E":
+                task = new Event(description, LocalDate.parse(fields[3]), LocalDate.parse(fields[4]));
+                break;
+            default: // "T"
+                task = new Todo(description);
+                break;
         }
         if (isDone) {
             task.markAsDone();
