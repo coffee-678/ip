@@ -38,12 +38,17 @@ public class Ui {
     }
 
     /**
-     * Adds one line of text to the buffer of messages waiting to be shown.
+     * Adds lines of text to the buffer of messages waiting to be shown.
      * Every {@code show...} method goes through here, so no part of the Ui
-     * writes to the console directly.
+     * writes to the console directly, and a message made of several lines
+     * is added as one call rather than one call per line.
+     *
+     * @param lines the lines to add, in the order they should be shown
      */
-    private void showLineOfText(String text) {
-        outputBuffer.append(text).append(System.lineSeparator());
+    private void showLines(String... lines) {
+        for (String line : lines) {
+            outputBuffer.append(line).append(System.lineSeparator());
+        }
     }
 
     /**
@@ -61,7 +66,7 @@ public class Ui {
     /** Shows the banner and greeting used when the console app starts. */
     public void showWelcome() {
         showLine();
-        showLineOfText(BANNER);
+        showLines(BANNER);
         showGreeting();
         showLine();
         showBlankLine();
@@ -73,8 +78,8 @@ public class Ui {
      * a fixed-width console font.
      */
     public void showGreeting() {
-        showLineOfText("Hello! I'm Duncan.");
-        showLineOfText("What can I do for you?");
+        showLines("Hello! I'm Duncan.",
+                "What can I do for you?");
     }
 
     /**
@@ -83,17 +88,17 @@ public class Ui {
      * around it.
      */
     public void showGoodbye() {
-        showLineOfText("Bye. Hope to see you again soon!");
+        showLines("Bye. Hope to see you again soon!");
     }
 
     /** Shows the horizontal rule used to separate sections of output. */
     public void showLine() {
-        showLineOfText(HORIZONTAL_LINE);
+        showLines(HORIZONTAL_LINE);
     }
 
     /** Shows a blank line, used to visually separate command responses. */
     public void showBlankLine() {
-        showLineOfText("");
+        showLines("");
     }
 
     /** Reads one line of console input typed by the user. */
@@ -106,48 +111,48 @@ public class Ui {
      * were added.
      */
     public void showTaskList(ArrayList<Task> tasks) {
-        showLineOfText("Here are the tasks in your list:");
+        showLines("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            showLineOfText((i + 1) + "." + tasks.get(i));
+            showLines((i + 1) + "." + tasks.get(i));
         }
     }
 
     /** Shows the tasks matching a find command's keyword, numbered from 1. */
     public void showMatchingTasks(ArrayList<Task> matches) {
-        showLineOfText("Here are the matching tasks in your list:");
+        showLines("Here are the matching tasks in your list:");
         for (int i = 0; i < matches.size(); i++) {
-            showLineOfText((i + 1) + "." + matches.get(i));
+            showLines((i + 1) + "." + matches.get(i));
         }
     }
 
     /** Reports that {@code task} was added, and how many tasks are in the list now. */
     public void showTaskAdded(Task task, int taskCount) {
-        showLineOfText("Got it. I've added this task:");
-        showLineOfText("  " + task);
-        showLineOfText("Now you have " + taskCount + " tasks in the list.");
+        showLines("Got it. I've added this task:",
+                "  " + task,
+                "Now you have " + taskCount + " tasks in the list.");
     }
 
     /** Reports that {@code task} was marked as done. */
     public void showTaskMarked(Task task) {
-        showLineOfText("Nice! I've marked this task as done:");
-        showLineOfText("  " + task);
+        showLines("Nice! I've marked this task as done:",
+                "  " + task);
     }
 
     /** Reports that {@code task} was marked as not done. */
     public void showTaskUnmarked(Task task) {
-        showLineOfText("OK, I've marked this task as not done yet:");
-        showLineOfText("  " + task);
+        showLines("OK, I've marked this task as not done yet:",
+                "  " + task);
     }
 
     /** Reports that {@code task} was removed, and how many tasks are left. */
     public void showTaskDeleted(Task task, int taskCount) {
-        showLineOfText("Noted. I've removed this task:");
-        showLineOfText("  " + task);
-        showLineOfText("Now you have " + taskCount + " tasks in the list.");
+        showLines("Noted. I've removed this task:",
+                "  " + task,
+                "Now you have " + taskCount + " tasks in the list.");
     }
 
     /** Shows the message of a {@link DuncanException} caught from a bad command. */
     public void showError(String message) {
-        showLineOfText(message);
+        showLines(message);
     }
 }
