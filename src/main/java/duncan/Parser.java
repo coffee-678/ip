@@ -33,51 +33,51 @@ public class Parser {
         String rest = getArguments(fullCommand);
 
         switch (commandWord) {
-        case "list":
-            return new ListCommand();
-        case "find": {
-            String keyword = rest.trim();
-            if (keyword.isEmpty()) {
-                throw new DuncanException("HEY! the keyword can't be left empty");
+            case "list":
+                return new ListCommand();
+            case "find": {
+                String keyword = rest.trim();
+                if (keyword.isEmpty()) {
+                    throw new DuncanException("HEY! the keyword can't be left empty");
+                }
+                return new FindCommand(keyword);
             }
-            return new FindCommand(keyword);
-        }
-        case "mark":
-            return new MarkCommand(parseTaskIndex(rest));
-        case "unmark":
-            return new UnmarkCommand(parseTaskIndex(rest));
-        case "delete":
-            return new DeleteCommand(parseTaskIndex(rest));
-        case "todo": {
-            String description = rest.trim();
-            if (description.isEmpty()) {
-                throw new DuncanException("HEY! the description can't be left empty");
+            case "mark":
+                return new MarkCommand(parseTaskIndex(rest));
+            case "unmark":
+                return new UnmarkCommand(parseTaskIndex(rest));
+            case "delete":
+                return new DeleteCommand(parseTaskIndex(rest));
+            case "todo": {
+                String description = rest.trim();
+                if (description.isEmpty()) {
+                    throw new DuncanException("HEY! the description can't be left empty");
+                }
+                return new AddCommand(new Todo(description));
             }
-            return new AddCommand(new Todo(description));
-        }
-        case "deadline": {
-            String[] parts = splitDeadlineArgs(rest);
-            String description = parts[0].trim();
-            LocalDate by = parseDate(parts[1]);
-            if (description.isEmpty()) {
-                throw new DuncanException("HEY! the description can't be left empty");
+            case "deadline": {
+                String[] parts = splitDeadlineArgs(rest);
+                String description = parts[0].trim();
+                LocalDate by = parseDate(parts[1]);
+                if (description.isEmpty()) {
+                    throw new DuncanException("HEY! the description can't be left empty");
+                }
+                return new AddCommand(new Deadline(description, by));
             }
-            return new AddCommand(new Deadline(description, by));
-        }
-        case "event": {
-            String[] parts = splitEventArgs(rest);
-            String description = parts[0];
-            LocalDate from = parseDate(parts[1]);
-            LocalDate to = parseDate(parts[2]);
-            if (description.isEmpty()) {
-                throw new DuncanException("HEY! the description can't be left empty");
+            case "event": {
+                String[] parts = splitEventArgs(rest);
+                String description = parts[0];
+                LocalDate from = parseDate(parts[1]);
+                LocalDate to = parseDate(parts[2]);
+                if (description.isEmpty()) {
+                    throw new DuncanException("HEY! the description can't be left empty");
+                }
+                return new AddCommand(new Event(description, from, to));
             }
-            return new AddCommand(new Event(description, from, to));
-        }
-        case "bye":
-            return new ExitCommand();
-        default:
-            throw new DuncanException("HEY! idk what's that supposed to be");
+            case "bye":
+                return new ExitCommand();
+            default:
+                throw new DuncanException("HEY! idk what's that supposed to be");
         }
     }
 
