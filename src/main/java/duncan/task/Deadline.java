@@ -16,8 +16,10 @@ public class Deadline extends Task {
     protected LocalDate by;
 
     /**
-     * @param description what the task is, as typed by the user
-     * @param by          the date this task is due
+     * Creates a deadline that is not done yet.
+     *
+     * @param description What the task is, as typed by the user.
+     * @param by The date this task is due.
      */
     public Deadline(String description, LocalDate by) {
         super(description);

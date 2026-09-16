@@ -21,6 +21,13 @@ import duncan.task.Todo;
  * returns the {@link Command} that carries out what was typed.
  */
 public class Parser {
+    // Markers that separate a command's description from its date arguments.
+    private static final String DEADLINE_BY_MARKER = "/by ";
+    private static final String EVENT_FROM_MARKER = "/from ";
+    private static final String EVENT_TO_MARKER = "/to ";
+
+    private static final String MESSAGE_EMPTY_DESCRIPTION = "HEY! the description can't be left empty";
+
     /**
      * Parses one full line of console input into the {@link Command} it
      * represents.
@@ -35,50 +42,66 @@ public class Parser {
         switch (commandWord) {
             case "list":
                 return new ListCommand();
-            case "find": {
-                String keyword = rest.trim();
-                if (keyword.isEmpty()) {
-                    throw new DuncanException("HEY! the keyword can't be left empty");
-                }
-                return new FindCommand(keyword);
-            }
+            case "find":
+                return parseFind(rest);
             case "mark":
                 return new MarkCommand(parseTaskIndex(rest));
             case "unmark":
                 return new UnmarkCommand(parseTaskIndex(rest));
             case "delete":
                 return new DeleteCommand(parseTaskIndex(rest));
-            case "todo": {
-                String description = rest.trim();
-                if (description.isEmpty()) {
-                    throw new DuncanException("HEY! the description can't be left empty");
-                }
-                return new AddCommand(new Todo(description));
-            }
-            case "deadline": {
-                String[] parts = splitDeadlineArgs(rest);
-                String description = parts[0].trim();
-                LocalDate by = parseDate(parts[1]);
-                if (description.isEmpty()) {
-                    throw new DuncanException("HEY! the description can't be left empty");
-                }
-                return new AddCommand(new Deadline(description, by));
-            }
-            case "event": {
-                String[] parts = splitEventArgs(rest);
-                String description = parts[0];
-                LocalDate from = parseDate(parts[1]);
-                LocalDate to = parseDate(parts[2]);
-                if (description.isEmpty()) {
-                    throw new DuncanException("HEY! the description can't be left empty");
-                }
-                return new AddCommand(new Event(description, from, to));
-            }
+            case "todo":
+                return parseTodo(rest);
+            case "deadline":
+                return parseDeadline(rest);
+            case "event":
+                return parseEvent(rest);
             case "bye":
                 return new ExitCommand();
             default:
                 throw new DuncanException("HEY! idk what's that supposed to be");
         }
+    }
+
+    /** Parses a "find" command's arguments into the command that searches for the keyword. */
+    private static Command parseFind(String rest) throws DuncanException {
+        String keyword = rest.trim();
+        if (keyword.isEmpty()) {
+            throw new DuncanException("HEY! the keyword can't be left empty");
+        }
+        return new FindCommand(keyword);
+    }
+
+    /** Parses a "todo" command's arguments into the command that adds the todo. */
+    private static Command parseTodo(String rest) throws DuncanException {
+        String description = rest.trim();
+        if (description.isEmpty()) {
+            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
+        }
+        return new AddCommand(new Todo(description));
+    }
+
+    /** Parses a "deadline" command's arguments into the command that adds the deadline. */
+    private static Command parseDeadline(String rest) throws DuncanException {
+        String[] parts = splitDeadlineArgs(rest);
+        String description = parts[0].trim();
+        LocalDate by = parseDate(parts[1]);
+        if (description.isEmpty()) {
+            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
+        }
+        return new AddCommand(new Deadline(description, by));
+    }
+
+    /** Parses an "event" command's arguments into the command that adds the event. */
+    private static Command parseEvent(String rest) throws DuncanException {
+        String[] parts = splitEventArgs(rest);
+        String description = parts[0].trim();
+        LocalDate from = parseDate(parts[1]);
+        LocalDate to = parseDate(parts[2]);
+        if (description.isEmpty()) {
+            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
+        }
+        return new AddCommand(new Event(description, from, to));
     }
 
     /** Returns the first word of the input line, e.g. "todo" from "todo read book". */
@@ -116,10 +139,10 @@ public class Parser {
         try {
             taskNumber = Integer.parseInt(rest.trim());
         } catch (NumberFormatException e) {
-            throw new DuncanException("HEY! this task number is bad");
+            throw new DuncanException(Command.MESSAGE_INVALID_TASK_NUMBER);
         }
         if (taskNumber < 1) {
-            throw new DuncanException("HEY! this task number is bad");
+            throw new DuncanException(Command.MESSAGE_INVALID_TASK_NUMBER);
         }
         return taskNumber - 1;
     }
@@ -130,7 +153,7 @@ public class Parser {
      * @return a two-element array: the untrimmed description text, and the raw date text
      */
     private static String[] splitDeadlineArgs(String rest) throws DuncanException {
-        String[] parts = rest.split("/by ", 2);
+        String[] parts = rest.split(DEADLINE_BY_MARKER, 2);
         if (parts.length < 2) {
             throw new DuncanException("HEY! deadlines must have /by <date/time>");
         }
@@ -140,19 +163,19 @@ public class Parser {
     /**
      * Splits an "event" command's arguments on the "/from " and "/to " markers.
      *
-     * @return a three-element array: the trimmed description, the raw "from" date
-     *         text, and the raw "to" date text
+     * @return a three-element array: the untrimmed description text, the raw "from"
+     *         date text, and the raw "to" date text
      */
     private static String[] splitEventArgs(String rest) throws DuncanException {
-        int fromIndex = rest.indexOf("/from ");
-        int toIndex = rest.indexOf("/to ");
+        int fromIndex = rest.indexOf(EVENT_FROM_MARKER);
+        int toIndex = rest.indexOf(EVENT_TO_MARKER);
         if (fromIndex == -1 || toIndex == -1) {
             throw new DuncanException("HEY! events must use /from and /to <date/time>");
         }
         return new String[] {
-            rest.substring(0, fromIndex).trim(),
-            rest.substring(fromIndex + 6, toIndex),
-            rest.substring(toIndex + 4)
+            rest.substring(0, fromIndex),
+            rest.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex),
+            rest.substring(toIndex + EVENT_TO_MARKER.length())
         };
     }
 }

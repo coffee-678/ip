@@ -14,7 +14,9 @@ public class AddCommand extends Command {
     private final Task task;
 
     /**
-     * @param task the already-built task to add
+     * Creates a command that adds the given task to the task list.
+     *
+     * @param task The already-built task to add.
      */
     public AddCommand(Task task) {
         this.task = task;

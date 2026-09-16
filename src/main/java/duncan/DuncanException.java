@@ -6,7 +6,9 @@ package duncan;
  */
 public class DuncanException extends Exception {
     /**
-     * @param message the user-facing explanation of what went wrong
+     * Creates an exception carrying a message to show the user.
+     *
+     * @param message The user-facing explanation of what went wrong.
      */
     public DuncanException(String message) {
         super(message);
