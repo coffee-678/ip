@@ -13,6 +13,7 @@ public class MarkCommand extends Command {
      * @param taskIndex the 0-based index of the task to mark as done
      */
     public MarkCommand(int taskIndex) {
+        assert taskIndex >= 0;
         this.taskIndex = taskIndex;
     }
 

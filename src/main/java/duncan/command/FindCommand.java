@@ -9,7 +9,13 @@ import duncan.task.TaskList;
 public class FindCommand extends Command {
     private final String keyword;
 
+    /**
+     * Creates a command that finds tasks whose descriptions contain the given keyword.
+     *
+     * @param keyword Text to search task descriptions for.
+     */
     public FindCommand(String keyword) {
+        assert keyword != null && !keyword.isEmpty();
         this.keyword = keyword;
     }
 
