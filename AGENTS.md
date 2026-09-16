@@ -30,7 +30,9 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 ## Coding standard
 
-All Java code in this project (new code and edits to existing code) must follow the `seedu-java-coding-standard` skill: naming, layout, statement style, and comment rules. Invoke it whenever writing, editing, or reviewing a `.java` file.
+All Java code in this project (new code and edits to existing code) must follow the `seedu-java-coding-standard` skill (SE-EDU basic + intermediate rules: https://se-education.org/guides/conventions/java/intermediate.html): naming, layout, statement style, and comment rules. Invoke it whenever writing, editing, or reviewing a `.java` file.
+
+* Advanced rules (on https://se-education.org/guides/conventions/java/index.html but not on the intermediate page) are optional: apply them only when asked, and do not report deviations from them as violations. They are: related classes in one package; class member declaration order; method modifier order; `this` only for shadowed fields; header comments on non-trivial private methods.
 
 ## Git
 
@@ -38,6 +40,7 @@ All Java code in this project (new code and edits to existing code) must follow 
 * Always merge branches with `--no-ff` (e.g. `git merge --no-ff branch-name`), so that every merge creates an explicit merge commit and the branch's history stays visible in the commit graph.
 * Do not commit or push unless explicitly asked.
 * Never edit or amend a pushed commit message.
+* Increment branches use `branch-<Increment-Name>` (e.g. `branch-A-Assertions`), as the course's increment instructions require. This overrides the kebab-case rule in the global CLAUDE.md and the `seedu-git-standard` skill.
 
 All commit messages and branch names must follow the `seedu-git-standard` skill. Invoke it whenever proposing a commit message or naming a branch.
 
