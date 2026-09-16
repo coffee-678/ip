@@ -26,6 +26,8 @@ public class Parser {
     private static final String EVENT_FROM_MARKER = "/from ";
     private static final String EVENT_TO_MARKER = "/to ";
 
+    private static final String MESSAGE_EMPTY_DESCRIPTION = "HEY! the description can't be left empty";
+
     /**
      * Parses one full line of console input into the {@link Command} it
      * represents.
@@ -74,7 +76,7 @@ public class Parser {
     private static Command parseTodo(String rest) throws DuncanException {
         String description = rest.trim();
         if (description.isEmpty()) {
-            throw new DuncanException("HEY! the description can't be left empty");
+            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
         }
         return new AddCommand(new Todo(description));
     }
@@ -85,7 +87,7 @@ public class Parser {
         String description = parts[0].trim();
         LocalDate by = parseDate(parts[1]);
         if (description.isEmpty()) {
-            throw new DuncanException("HEY! the description can't be left empty");
+            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
         }
         return new AddCommand(new Deadline(description, by));
     }
@@ -97,7 +99,7 @@ public class Parser {
         LocalDate from = parseDate(parts[1]);
         LocalDate to = parseDate(parts[2]);
         if (description.isEmpty()) {
-            throw new DuncanException("HEY! the description can't be left empty");
+            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
         }
         return new AddCommand(new Event(description, from, to));
     }
