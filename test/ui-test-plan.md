@@ -527,6 +527,240 @@ Here are the matching tasks in your list:
 ____________________________________________________________
 ```
 
+### TC18: Reschedule a deadline
+
+**Aim:** Check that `reschedule N /by` moves a deadline to the new date and shows
+the task before and after.
+
+**Input:**
+
+```text
+deadline return book /by 2019-12-02
+reschedule 1 /by 2019-12-09
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Dec 2 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+OK, I've rescheduled this task:
+  from: [D][ ] return book (by: Dec 2 2019)
+  to:   [D][ ] return book (by: Dec 9 2019)
+____________________________________________________________
+```
+
+### TC19: Reschedule an event
+
+**Aim:** Check that `reschedule N /from /to` moves both of an event's dates.
+
+**Input:**
+
+```text
+event project fair /from 2019-12-01 /to 2019-12-02
+reschedule 1 /from 2019-12-05 /to 2019-12-06
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+OK, I've rescheduled this task:
+  from: [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)
+  to:   [E][ ] project fair (from: Dec 5 2019 to: Dec 6 2019)
+____________________________________________________________
+```
+
+### TC20: Snooze a deadline
+
+**Aim:** Check that `snooze N DAYS` pushes a deadline's date back by that many days,
+and names the number of days in the reply.
+
+**Input:**
+
+```text
+deadline return book /by 2019-12-02
+snooze 1 7
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Dec 2 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+OK, I've snoozed this task by 7 days:
+  from: [D][ ] return book (by: Dec 2 2019)
+  to:   [D][ ] return book (by: Dec 9 2019)
+____________________________________________________________
+```
+
+### TC21: Snooze an event
+
+**Aim:** Check that snoozing an event moves both its start and end dates by the same
+number of days.
+
+**Input:**
+
+```text
+event project fair /from 2019-12-01 /to 2019-12-02
+snooze 1 7
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+OK, I've snoozed this task by 7 days:
+  from: [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)
+  to:   [E][ ] project fair (from: Dec 8 2019 to: Dec 9 2019)
+____________________________________________________________
+```
+
+### TC22: Reschedule a task that is done
+
+**Aim:** Check that rescheduling a done task changes only its date, and it stays
+marked done.
+
+**Input:**
+
+```text
+deadline return book /by 2019-12-02
+mark 1
+reschedule 1 /by 2019-12-09
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Dec 2 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+Nice! I've marked this task as done:
+  [D][X] return book (by: Dec 2 2019)
+____________________________________________________________
+
+____________________________________________________________
+OK, I've rescheduled this task:
+  from: [D][X] return book (by: Dec 2 2019)
+  to:   [D][X] return book (by: Dec 9 2019)
+____________________________________________________________
+```
+
+### TC23: Snooze a todo
+
+**Aim:** Check that a todo, which has no date, cannot be snoozed.
+
+**Input:**
+
+```text
+todo read book
+snooze 1 7
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+HEY! only deadlines and events can be rescheduled
+____________________________________________________________
+```
+
+### TC24: Snooze by zero days
+
+**Aim:** Check that a number of days that is not a positive whole number is rejected,
+and the task keeps its date.
+
+**Input:**
+
+```text
+deadline return book /by 2019-12-02
+snooze 1 0
+list
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Dec 2 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+HEY! the number of days is bad
+____________________________________________________________
+
+____________________________________________________________
+Here are the tasks in your list:
+1.[D][ ] return book (by: Dec 2 2019)
+____________________________________________________________
+```
+
+### TC25: Reschedule a deadline with event dates
+
+**Aim:** Check that giving `/from` and `/to` to a deadline is rejected with the
+message that names the `/by` it needs, and the task keeps its date.
+
+**Input:**
+
+```text
+deadline return book /by 2019-12-02
+reschedule 1 /from 2019-12-05 /to 2019-12-06
+list
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Dec 2 2019)
+Now you have 1 tasks in the list.
+____________________________________________________________
+
+____________________________________________________________
+HEY! deadlines must have /by <date/time>
+____________________________________________________________
+
+____________________________________________________________
+Here are the tasks in your list:
+1.[D][ ] return book (by: Dec 2 2019)
+____________________________________________________________
+```
+
 ## Not covered by this plan
 
 - **Saving and loading between runs.** Every case runs in its own empty
