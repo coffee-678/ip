@@ -21,6 +21,11 @@ import duncan.task.Todo;
  * returns the {@link Command} that carries out what was typed.
  */
 public class Parser {
+    // Markers that separate a command's description from its date arguments.
+    private static final String DEADLINE_BY_MARKER = "/by ";
+    private static final String EVENT_FROM_MARKER = "/from ";
+    private static final String EVENT_TO_MARKER = "/to ";
+
     /**
      * Parses one full line of console input into the {@link Command} it
      * represents.
@@ -130,7 +135,7 @@ public class Parser {
      * @return a two-element array: the untrimmed description text, and the raw date text
      */
     private static String[] splitDeadlineArgs(String rest) throws DuncanException {
-        String[] parts = rest.split("/by ", 2);
+        String[] parts = rest.split(DEADLINE_BY_MARKER, 2);
         if (parts.length < 2) {
             throw new DuncanException("HEY! deadlines must have /by <date/time>");
         }
@@ -144,15 +149,15 @@ public class Parser {
      *         text, and the raw "to" date text
      */
     private static String[] splitEventArgs(String rest) throws DuncanException {
-        int fromIndex = rest.indexOf("/from ");
-        int toIndex = rest.indexOf("/to ");
+        int fromIndex = rest.indexOf(EVENT_FROM_MARKER);
+        int toIndex = rest.indexOf(EVENT_TO_MARKER);
         if (fromIndex == -1 || toIndex == -1) {
             throw new DuncanException("HEY! events must use /from and /to <date/time>");
         }
         return new String[] {
             rest.substring(0, fromIndex).trim(),
-            rest.substring(fromIndex + 6, toIndex),
-            rest.substring(toIndex + 4)
+            rest.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex),
+            rest.substring(toIndex + EVENT_TO_MARKER.length())
         };
     }
 }
