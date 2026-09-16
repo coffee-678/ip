@@ -54,3 +54,4 @@ All commit messages and branch names must follow the `seedu-git-standard` skill.
 
 * Target ~50% JUnit test coverage, focused on the highest-value methods: complex, core, or critical business logic (e.g. parsing/validation, command execution, persistence round-trips, domain formatting). Deprioritize thin I/O wrappers, the program's entry point/main loop, and trivial one-line methods.
 * After any code change, update the JUnit tests so coverage of the affected logic stays at that target — add tests for new logic, and fix or extend existing tests for changed logic, rather than letting them go stale.
+* Before running the app in the project folder, check data/ and back up any existing data file; restore it afterwards. Never delete files you did not create.
