@@ -139,10 +139,10 @@ public class Parser {
         try {
             taskNumber = Integer.parseInt(rest.trim());
         } catch (NumberFormatException e) {
-            throw new DuncanException("HEY! this task number is bad");
+            throw new DuncanException(Command.MESSAGE_INVALID_TASK_NUMBER);
         }
         if (taskNumber < 1) {
-            throw new DuncanException("HEY! this task number is bad");
+            throw new DuncanException(Command.MESSAGE_INVALID_TASK_NUMBER);
         }
         return taskNumber - 1;
     }
