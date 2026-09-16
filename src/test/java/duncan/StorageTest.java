@@ -51,6 +51,26 @@ public class StorageTest {
     }
 
     @Test
+    public void saveThenLoad_rescheduledAndSnoozedTasks_newDatesLoaded() {
+        Storage storage = new Storage(tempDir.resolve("tasks.txt").toString());
+        Deadline deadline = new Deadline("return book", LocalDate.of(2019, 12, 2));
+        deadline.reschedule(LocalDate.of(2019, 12, 9));
+        Event event = new Event("project fair", LocalDate.of(2019, 12, 1), LocalDate.of(2019, 12, 2));
+        event.snooze(7);
+
+        ArrayList<Task> original = new ArrayList<>();
+        original.add(deadline);
+        original.add(event);
+        storage.save(original);
+
+        ArrayList<Task> loaded = storage.load();
+
+        assertEquals(2, loaded.size());
+        assertEquals("[D][ ] return book (by: Dec 9 2019)", loaded.get(0).toString());
+        assertEquals("[E][ ] project fair (from: Dec 8 2019 to: Dec 9 2019)", loaded.get(1).toString());
+    }
+
+    @Test
     public void save_parentFolderDoesNotExistYet_folderCreatedAndFileSaved() {
         Path savePath = tempDir.resolve("nested/dir/tasks.txt");
         Storage storage = new Storage(savePath.toString());
