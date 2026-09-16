@@ -156,6 +156,19 @@ public class Ui {
                 "  to:   " + newTask);
     }
 
+    /**
+     * Reports that a task's dates were pushed back, showing it before and after.
+     *
+     * @param oldTask The task as it was displayed before snoozing.
+     * @param newTask The task after snoozing.
+     * @param days How many days the task's dates were pushed back by.
+     */
+    public void showTaskSnoozed(String oldTask, Task newTask, int days) {
+        showLines("OK, I've snoozed this task by " + days + " days:",
+                "  from: " + oldTask,
+                "  to:   " + newTask);
+    }
+
     /** Reports that {@code task} was removed, and how many tasks are left. */
     public void showTaskDeleted(Task task, int taskCount) {
         showLines("Noted. I've removed this task:",

@@ -24,6 +24,12 @@ public abstract class Command {
     public static final String MESSAGE_CANNOT_RESCHEDULE = "HEY! only deadlines and events can be rescheduled";
 
     /**
+     * Error shown when a snooze's number of days is not a positive whole number,
+     * or would move a date past the latest date that can be stored.
+     */
+    public static final String MESSAGE_INVALID_DAYS = "HEY! the number of days is bad";
+
+    /**
      * Carries out this command: updates the task list as needed, reports
      * the result through {@code ui}, and persists any change through
      * {@code storage}.

@@ -11,6 +11,7 @@ import duncan.command.FindCommand;
 import duncan.command.ListCommand;
 import duncan.command.MarkCommand;
 import duncan.command.RescheduleCommand;
+import duncan.command.SnoozeCommand;
 import duncan.command.UnmarkCommand;
 import duncan.task.Deadline;
 import duncan.task.Event;
@@ -59,6 +60,8 @@ public class Parser {
                 return parseEvent(rest);
             case "reschedule":
                 return parseReschedule(rest);
+            case "snooze":
+                return parseSnooze(rest);
             case "bye":
                 return new ExitCommand();
             default:
@@ -139,6 +142,37 @@ public class Parser {
         }
 
         return new RescheduleCommand(taskIndex, by, from, to);
+    }
+
+    /**
+     * Parses a "snooze" command's arguments: a task number followed by a number
+     * of days, e.g. "2 7".
+     *
+     * @throws DuncanException if the task number or the number of days is bad
+     */
+    private static Command parseSnooze(String rest) throws DuncanException {
+        String[] parts = rest.trim().split(" ", 2);
+        int taskIndex = parseTaskIndex(parts[0]);
+        String daysText = parts.length > 1 ? parts[1] : "";
+        return new SnoozeCommand(taskIndex, parseDays(daysText));
+    }
+
+    /**
+     * Converts a number of days typed by the user into an int.
+     *
+     * @throws DuncanException if the text is not a positive whole number
+     */
+    private static int parseDays(String daysText) throws DuncanException {
+        int days;
+        try {
+            days = Integer.parseInt(daysText.trim());
+        } catch (NumberFormatException e) {
+            throw new DuncanException(Command.MESSAGE_INVALID_DAYS);
+        }
+        if (days < 1) {
+            throw new DuncanException(Command.MESSAGE_INVALID_DAYS);
+        }
+        return days;
     }
 
     /** Returns the first word of the input line, e.g. "todo" from "todo read book". */

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 import duncan.task.Deadline;
+import duncan.task.Event;
 import duncan.task.Todo;
 
 public class UiTest {
@@ -41,6 +42,19 @@ public class UiTest {
         assertEquals("OK, I've rescheduled this task:" + NEWLINE
                 + "  from: [D][ ] return book (by: Dec 2 2019)" + NEWLINE
                 + "  to:   [D][ ] return book (by: Dec 9 2019)" + NEWLINE,
+                ui.flushOutput());
+    }
+
+    @Test
+    public void showTaskSnoozed_event_daysAndOldAndNewTaskShown() {
+        Ui ui = new Ui();
+
+        ui.showTaskSnoozed("[E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)",
+                new Event("project fair", LocalDate.of(2019, 12, 8), LocalDate.of(2019, 12, 9)), 7);
+
+        assertEquals("OK, I've snoozed this task by 7 days:" + NEWLINE
+                + "  from: [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)" + NEWLINE
+                + "  to:   [E][ ] project fair (from: Dec 8 2019 to: Dec 9 2019)" + NEWLINE,
                 ui.flushOutput());
     }
 
