@@ -15,7 +15,9 @@ public abstract class Task {
     protected boolean isDone;
 
     /**
-     * @param description what the task is, as typed by the user
+     * Creates a task that is not done yet.
+     *
+     * @param description What the task is, as typed by the user.
      */
     public Task(String description) {
         this.description = description;

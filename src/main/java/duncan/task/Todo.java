@@ -5,7 +5,9 @@ package duncan.task;
  */
 public class Todo extends Task {
     /**
-     * @param description what the task is, as typed by the user
+     * Creates a todo that is not done yet.
+     *
+     * @param description What the task is, as typed by the user.
      */
     public Todo(String description) {
         super(description);

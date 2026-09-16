@@ -10,7 +10,9 @@ public class UnmarkCommand extends Command {
     private final int taskIndex;
 
     /**
-     * @param taskIndex the 0-based index of the task to mark as not done
+     * Creates a command that marks the task at the given index as not done.
+     *
+     * @param taskIndex The 0-based index of the task to mark as not done.
      */
     public UnmarkCommand(int taskIndex) {
         this.taskIndex = taskIndex;

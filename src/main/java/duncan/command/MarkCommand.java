@@ -10,7 +10,9 @@ public class MarkCommand extends Command {
     private final int taskIndex;
 
     /**
-     * @param taskIndex the 0-based index of the task to mark as done
+     * Creates a command that marks the task at the given index as done.
+     *
+     * @param taskIndex The 0-based index of the task to mark as done.
      */
     public MarkCommand(int taskIndex) {
         this.taskIndex = taskIndex;
