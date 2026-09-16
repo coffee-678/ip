@@ -14,6 +14,15 @@ public abstract class Command {
     /** Error shown when a task number is not a whole number that refers to a task in the list. */
     public static final String MESSAGE_INVALID_TASK_NUMBER = "HEY! this task number is bad";
 
+    /** Error shown when a deadline is given without its "/by" date. */
+    public static final String MESSAGE_MISSING_BY = "HEY! deadlines must have /by <date/time>";
+
+    /** Error shown when an event is given without both its "/from" and "/to" dates. */
+    public static final String MESSAGE_MISSING_FROM_TO = "HEY! events must use /from and /to <date/time>";
+
+    /** Error shown when a task without dates (i.e. a todo) is asked to be rescheduled or snoozed. */
+    public static final String MESSAGE_CANNOT_RESCHEDULE = "HEY! only deadlines and events can be rescheduled";
+
     /**
      * Carries out this command: updates the task list as needed, reports
      * the result through {@code ui}, and persists any change through

@@ -13,6 +13,7 @@ import duncan.command.DeleteCommand;
 import duncan.command.ExitCommand;
 import duncan.command.ListCommand;
 import duncan.command.MarkCommand;
+import duncan.command.RescheduleCommand;
 import duncan.command.UnmarkCommand;
 
 public class ParserTest {
@@ -157,6 +158,48 @@ public class ParserTest {
     @Test
     public void parse_deleteWithValidNumber_deleteCommandReturned() throws DuncanException {
         assertInstanceOf(DeleteCommand.class, Parser.parse("delete 3"));
+    }
+
+    // ---- reschedule ----
+
+    @Test
+    public void parse_rescheduleWithBy_rescheduleCommandReturned() throws DuncanException {
+        assertInstanceOf(RescheduleCommand.class, Parser.parse("reschedule 2 /by 2019-12-09"));
+    }
+
+    @Test
+    public void parse_rescheduleWithFromAndTo_rescheduleCommandReturned() throws DuncanException {
+        assertInstanceOf(RescheduleCommand.class, Parser.parse("reschedule 3 /from 2019-12-05 /to 2019-12-06"));
+    }
+
+    @Test
+    public void parse_rescheduleWithNoDates_rescheduleCommandReturned() throws DuncanException {
+        // Whether dates are missing depends on the task's type, so the command reports it, not the parser.
+        assertInstanceOf(RescheduleCommand.class, Parser.parse("reschedule 2"));
+    }
+
+    @Test
+    public void parse_rescheduleWithBadTaskNumber_exceptionThrown() {
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("reschedule two /by 2019-12-09"));
+
+        assertEquals("HEY! this task number is bad", e.getMessage());
+    }
+
+    @Test
+    public void parse_rescheduleWithBadByDate_exceptionThrown() {
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("reschedule 2 /by next week"));
+
+        assertEquals("HEY! dates must be in yyyy-mm-dd format", e.getMessage());
+    }
+
+    @Test
+    public void parse_rescheduleWithBadToDate_exceptionThrown() {
+        DuncanException e = assertThrows(DuncanException.class, () ->
+                Parser.parse("reschedule 3 /from 2019-12-05 /to someday"));
+
+        assertEquals("HEY! dates must be in yyyy-mm-dd format", e.getMessage());
     }
 
     // ---- unrecognised ----

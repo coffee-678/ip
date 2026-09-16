@@ -10,6 +10,7 @@ import duncan.command.ExitCommand;
 import duncan.command.FindCommand;
 import duncan.command.ListCommand;
 import duncan.command.MarkCommand;
+import duncan.command.RescheduleCommand;
 import duncan.command.UnmarkCommand;
 import duncan.task.Deadline;
 import duncan.task.Event;
@@ -56,6 +57,8 @@ public class Parser {
                 return parseDeadline(rest);
             case "event":
                 return parseEvent(rest);
+            case "reschedule":
+                return parseReschedule(rest);
             case "bye":
                 return new ExitCommand();
             default:
@@ -102,6 +105,40 @@ public class Parser {
             throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
         }
         return new AddCommand(new Event(description, from, to));
+    }
+
+    /**
+     * Parses a "reschedule" command's arguments: a task number followed by either
+     * "/by" and a date, or "/from" and "/to" with a date each, e.g. "2 /by 2019-12-09".
+     *
+     * <p>Which of the two forms is needed depends on the task's type, which only the
+     * command can see. So a form that is missing, or has other text before its first
+     * marker, is not an error here: its dates are left null for the command to report.
+     *
+     * @throws DuncanException if the task number is bad, or a date given is not yyyy-mm-dd
+     */
+    private static Command parseReschedule(String rest) throws DuncanException {
+        String[] parts = rest.trim().split(" ", 2);
+        int taskIndex = parseTaskIndex(parts[0]);
+        String dateArgs = parts.length > 1 ? parts[1] : "";
+
+        LocalDate by = null;
+        int byIndex = dateArgs.indexOf(DEADLINE_BY_MARKER);
+        if (byIndex != -1 && dateArgs.substring(0, byIndex).isBlank()) {
+            by = parseDate(dateArgs.substring(byIndex + DEADLINE_BY_MARKER.length()));
+        }
+
+        LocalDate from = null;
+        LocalDate to = null;
+        int fromIndex = dateArgs.indexOf(EVENT_FROM_MARKER);
+        int toIndex = dateArgs.indexOf(EVENT_TO_MARKER);
+        boolean hasFromThenTo = fromIndex != -1 && toIndex > fromIndex;
+        if (hasFromThenTo && dateArgs.substring(0, fromIndex).isBlank()) {
+            from = parseDate(dateArgs.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex));
+            to = parseDate(dateArgs.substring(toIndex + EVENT_TO_MARKER.length()));
+        }
+
+        return new RescheduleCommand(taskIndex, by, from, to);
     }
 
     /** Returns the first word of the input line, e.g. "todo" from "todo read book". */
@@ -155,7 +192,7 @@ public class Parser {
     private static String[] splitDeadlineArgs(String rest) throws DuncanException {
         String[] parts = rest.split(DEADLINE_BY_MARKER, 2);
         if (parts.length < 2) {
-            throw new DuncanException("HEY! deadlines must have /by <date/time>");
+            throw new DuncanException(Command.MESSAGE_MISSING_BY);
         }
         return parts;
     }
@@ -170,7 +207,7 @@ public class Parser {
         int fromIndex = rest.indexOf(EVENT_FROM_MARKER);
         int toIndex = rest.indexOf(EVENT_TO_MARKER);
         if (fromIndex == -1 || toIndex == -1) {
-            throw new DuncanException("HEY! events must use /from and /to <date/time>");
+            throw new DuncanException(Command.MESSAGE_MISSING_FROM_TO);
         }
         return new String[] {
             rest.substring(0, fromIndex),

@@ -144,6 +144,18 @@ public class Ui {
                 "  " + task);
     }
 
+    /**
+     * Reports that a task was moved to new dates, showing it before and after.
+     *
+     * @param oldTask The task as it was displayed before rescheduling.
+     * @param newTask The task after rescheduling.
+     */
+    public void showTaskRescheduled(String oldTask, Task newTask) {
+        showLines("OK, I've rescheduled this task:",
+                "  from: " + oldTask,
+                "  to:   " + newTask);
+    }
+
     /** Reports that {@code task} was removed, and how many tasks are left. */
     public void showTaskDeleted(Task task, int taskCount) {
         showLines("Noted. I've removed this task:",

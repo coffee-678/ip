@@ -2,8 +2,11 @@ package duncan;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 
+import duncan.task.Deadline;
 import duncan.task.Todo;
 
 public class UiTest {
@@ -25,6 +28,19 @@ public class UiTest {
                 + "  [T][ ] read book" + NEWLINE
                 + "Now you have 1 tasks in the list." + NEWLINE
                 + "Bye. Hope to see you again soon!" + NEWLINE,
+                ui.flushOutput());
+    }
+
+    @Test
+    public void showTaskRescheduled_deadline_oldAndNewTaskShown() {
+        Ui ui = new Ui();
+
+        ui.showTaskRescheduled("[D][ ] return book (by: Dec 2 2019)",
+                new Deadline("return book", LocalDate.of(2019, 12, 9)));
+
+        assertEquals("OK, I've rescheduled this task:" + NEWLINE
+                + "  from: [D][ ] return book (by: Dec 2 2019)" + NEWLINE
+                + "  to:   [D][ ] return book (by: Dec 9 2019)" + NEWLINE,
                 ui.flushOutput());
     }
 

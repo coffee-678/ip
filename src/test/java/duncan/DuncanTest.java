@@ -62,4 +62,22 @@ public class DuncanTest {
                 + "What can I do for you?" + NEWLINE,
                 createDuncan().getWelcome());
     }
+
+    @Test
+    public void getResponse_rescheduleDeadlineWithTextBeforeBy_missingByMessageReturned() {
+        Duncan duncan = createDuncan();
+        duncan.getResponse("deadline return book /by 2019-12-02");
+
+        assertEquals("HEY! deadlines must have /by <date/time>" + NEWLINE,
+                duncan.getResponse("reschedule 1 soon /by 2019-12-09"));
+    }
+
+    @Test
+    public void getResponse_rescheduleEventWithToBeforeFrom_missingFromToMessageReturned() {
+        Duncan duncan = createDuncan();
+        duncan.getResponse("event project fair /from 2019-12-01 /to 2019-12-02");
+
+        assertEquals("HEY! events must use /from and /to <date/time>" + NEWLINE,
+                duncan.getResponse("reschedule 1 /to 2019-12-06 /from 2019-12-05"));
+    }
 }
