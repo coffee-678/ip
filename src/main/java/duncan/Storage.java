@@ -41,8 +41,10 @@ public class Storage {
     private final File file;
 
     /**
-     * @param filePath path to the save file, relative to the directory the
-     *                 program is run from (e.g. "data/duncan.txt")
+     * Creates a storage that reads and writes the task list at the given path.
+     *
+     * @param filePath Path to the save file, relative to the directory the
+     *     program is run from (e.g. "data/duncan.txt").
      */
     public Storage(String filePath) {
         this.file = new File(filePath);

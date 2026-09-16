@@ -14,7 +14,9 @@ public class AddCommand extends Command {
     private final Task task;
 
     /**
-     * @param task the already-built task to add
+     * Creates a command that adds the given task to the task list.
+     *
+     * @param task The already-built task to add.
      */
     public AddCommand(Task task) {
         this.task = task;
@@ -24,6 +26,7 @@ public class AddCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         tasks.add(task);
+        assert tasks.get(tasks.size() - 1) == task;
         storage.save(tasks.getTasks());
         ui.showTaskAdded(task, tasks.size());
     }

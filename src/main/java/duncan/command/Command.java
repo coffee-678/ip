@@ -11,6 +11,9 @@ import duncan.task.TaskList;
  * subclass that knows how to carry out that one action.
  */
 public abstract class Command {
+    /** Error shown when a task number is not a whole number that refers to a task in the list. */
+    public static final String MESSAGE_INVALID_TASK_NUMBER = "HEY! this task number is bad";
+
     /**
      * Carries out this command: updates the task list as needed, reports
      * the result through {@code ui}, and persists any change through
@@ -24,5 +27,18 @@ public abstract class Command {
     /** Whether this command should end the program's main loop. */
     public boolean isExit() {
         return false;
+    }
+
+    /**
+     * Checks that the given index refers to a task in the list.
+     *
+     * @param tasks The task list the index should refer into.
+     * @param taskIndex The 0-based index to check.
+     * @throws DuncanException If the index is out of range.
+     */
+    protected static void checkTaskIndex(TaskList tasks, int taskIndex) throws DuncanException {
+        if (!tasks.isValidIndex(taskIndex)) {
+            throw new DuncanException(MESSAGE_INVALID_TASK_NUMBER);
+        }
     }
 }

@@ -11,18 +11,19 @@ public class DeleteCommand extends Command {
     private final int taskIndex;
 
     /**
-     * @param taskIndex the 0-based index of the task to remove
+     * Creates a command that removes the task at the given index.
+     *
+     * @param taskIndex The 0-based index of the task to remove.
      */
     public DeleteCommand(int taskIndex) {
+        assert taskIndex >= 0;
         this.taskIndex = taskIndex;
     }
 
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
-        if (!tasks.isValidIndex(taskIndex)) {
-            throw new DuncanException("HEY! this task number is bad");
-        }
+        checkTaskIndex(tasks, taskIndex);
         Task removedTask = tasks.remove(taskIndex);
         storage.save(tasks.getTasks());
         ui.showTaskDeleted(removedTask, tasks.size());

@@ -17,12 +17,16 @@ public class Event extends Task {
     protected LocalDate to;
 
     /**
-     * @param description what the task is, as typed by the user
-     * @param from        the date this event starts
-     * @param to          the date this event ends
+     * Creates an event that is not done yet.
+     *
+     * @param description What the task is, as typed by the user.
+     * @param from The date this event starts.
+     * @param to The date this event ends.
      */
     public Event(String description, LocalDate from, LocalDate to) {
         super(description);
+        assert from != null;
+        assert to != null;
         this.from = from;
         this.to = to;
     }

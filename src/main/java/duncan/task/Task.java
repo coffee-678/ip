@@ -15,7 +15,9 @@ public abstract class Task {
     protected boolean isDone;
 
     /**
-     * @param description what the task is, as typed by the user
+     * Creates a task that is not done yet.
+     *
+     * @param description What the task is, as typed by the user.
      */
     public Task(String description) {
         this.description = description;
@@ -24,7 +26,7 @@ public abstract class Task {
 
     /** Returns "X" if this task is done, or a single space if it is not. */
     public String getStatusIcon() {
-        return (isDone ? "X" : " "); // mark done task with X
+        return (isDone ? "X" : " ");
     }
 
     /** Returns this task's description, as typed by the user. */
