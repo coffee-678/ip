@@ -178,6 +178,46 @@ public class TaskListTest {
         assertFalse(tasks.isValidIndex(100));
     }
 
+    // ---- find ----
+
+    @Test
+    public void find_keywordInDifferentCase_matchingTaskReturned() {
+        TaskList tasks = new TaskList();
+        Task task = new Todo("Read Book");
+        tasks.add(task);
+
+        ArrayList<Task> matches = tasks.find("rEAD");
+
+        assertEquals(1, matches.size());
+        assertSame(task, matches.get(0));
+    }
+
+    @Test
+    public void find_keywordMatchingNoTask_emptyListReturned() {
+        TaskList tasks = taskListOfSize(3);
+
+        ArrayList<Task> matches = tasks.find("book");
+
+        assertTrue(matches.isEmpty());
+    }
+
+    @Test
+    public void find_keywordMatchingSomeTasks_matchingTasksReturnedInOrder() {
+        TaskList tasks = new TaskList();
+        Task firstBook = new Todo("borrow book");
+        Task nonMatch = new Todo("buy milk");
+        Task secondBook = new Todo("return book");
+        tasks.add(firstBook);
+        tasks.add(nonMatch);
+        tasks.add(secondBook);
+
+        ArrayList<Task> matches = tasks.find("book");
+
+        assertEquals(2, matches.size());
+        assertSame(firstBook, matches.get(0));
+        assertSame(secondBook, matches.get(1));
+    }
+
     // ---- getTasks ----
 
     @Test
