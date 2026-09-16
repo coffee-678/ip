@@ -1,6 +1,7 @@
 package duncan.task;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import duncan.Storage;
 import duncan.Ui;
@@ -52,13 +53,10 @@ public class TaskList {
 
     /** Returns the tasks whose description contains {@code keyword} (case-insensitive). */
     public ArrayList<Task> find(String keyword) {
-        ArrayList<Task> matches = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                matches.add(task);
-            }
-        }
-        return matches;
+        String lowerCaseKeyword = keyword.toLowerCase();
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase().contains(lowerCaseKeyword))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /** Returns the underlying list, e.g. for {@link Storage} to save or {@link Ui} to display. */
