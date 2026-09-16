@@ -19,9 +19,7 @@ public class MarkCommand extends Command {
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
-        if (!tasks.isValidIndex(taskIndex)) {
-            throw new DuncanException("HEY! this task number is bad");
-        }
+        checkTaskIndex(tasks, taskIndex);
         tasks.get(taskIndex).markAsDone();
         storage.save(tasks.getTasks());
         ui.showTaskMarked(tasks.get(taskIndex));
