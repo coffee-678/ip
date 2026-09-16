@@ -13,6 +13,7 @@ public class UnmarkCommand extends Command {
      * @param taskIndex the 0-based index of the task to mark as not done
      */
     public UnmarkCommand(int taskIndex) {
+        assert taskIndex >= 0;
         this.taskIndex = taskIndex;
     }
 

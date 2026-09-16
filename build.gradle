@@ -69,6 +69,7 @@ tasks.register('runCli', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'duncan.Duncan'
     standardInput = System.in
+    enableAssertions = true
 }
 
 jar {
@@ -84,6 +85,7 @@ shadowJar {
 
 run {
     standardInput = System.in
+    enableAssertions = true
 }
 
 checkstyle {
