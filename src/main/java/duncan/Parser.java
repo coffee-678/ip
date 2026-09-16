@@ -40,50 +40,66 @@ public class Parser {
         switch (commandWord) {
             case "list":
                 return new ListCommand();
-            case "find": {
-                String keyword = rest.trim();
-                if (keyword.isEmpty()) {
-                    throw new DuncanException("HEY! the keyword can't be left empty");
-                }
-                return new FindCommand(keyword);
-            }
+            case "find":
+                return parseFind(rest);
             case "mark":
                 return new MarkCommand(parseTaskIndex(rest));
             case "unmark":
                 return new UnmarkCommand(parseTaskIndex(rest));
             case "delete":
                 return new DeleteCommand(parseTaskIndex(rest));
-            case "todo": {
-                String description = rest.trim();
-                if (description.isEmpty()) {
-                    throw new DuncanException("HEY! the description can't be left empty");
-                }
-                return new AddCommand(new Todo(description));
-            }
-            case "deadline": {
-                String[] parts = splitDeadlineArgs(rest);
-                String description = parts[0].trim();
-                LocalDate by = parseDate(parts[1]);
-                if (description.isEmpty()) {
-                    throw new DuncanException("HEY! the description can't be left empty");
-                }
-                return new AddCommand(new Deadline(description, by));
-            }
-            case "event": {
-                String[] parts = splitEventArgs(rest);
-                String description = parts[0];
-                LocalDate from = parseDate(parts[1]);
-                LocalDate to = parseDate(parts[2]);
-                if (description.isEmpty()) {
-                    throw new DuncanException("HEY! the description can't be left empty");
-                }
-                return new AddCommand(new Event(description, from, to));
-            }
+            case "todo":
+                return parseTodo(rest);
+            case "deadline":
+                return parseDeadline(rest);
+            case "event":
+                return parseEvent(rest);
             case "bye":
                 return new ExitCommand();
             default:
                 throw new DuncanException("HEY! idk what's that supposed to be");
         }
+    }
+
+    /** Parses a "find" command's arguments into the command that searches for the keyword. */
+    private static Command parseFind(String rest) throws DuncanException {
+        String keyword = rest.trim();
+        if (keyword.isEmpty()) {
+            throw new DuncanException("HEY! the keyword can't be left empty");
+        }
+        return new FindCommand(keyword);
+    }
+
+    /** Parses a "todo" command's arguments into the command that adds the todo. */
+    private static Command parseTodo(String rest) throws DuncanException {
+        String description = rest.trim();
+        if (description.isEmpty()) {
+            throw new DuncanException("HEY! the description can't be left empty");
+        }
+        return new AddCommand(new Todo(description));
+    }
+
+    /** Parses a "deadline" command's arguments into the command that adds the deadline. */
+    private static Command parseDeadline(String rest) throws DuncanException {
+        String[] parts = splitDeadlineArgs(rest);
+        String description = parts[0].trim();
+        LocalDate by = parseDate(parts[1]);
+        if (description.isEmpty()) {
+            throw new DuncanException("HEY! the description can't be left empty");
+        }
+        return new AddCommand(new Deadline(description, by));
+    }
+
+    /** Parses an "event" command's arguments into the command that adds the event. */
+    private static Command parseEvent(String rest) throws DuncanException {
+        String[] parts = splitEventArgs(rest);
+        String description = parts[0];
+        LocalDate from = parseDate(parts[1]);
+        LocalDate to = parseDate(parts[2]);
+        if (description.isEmpty()) {
+            throw new DuncanException("HEY! the description can't be left empty");
+        }
+        return new AddCommand(new Event(description, from, to));
     }
 
     /** Returns the first word of the input line, e.g. "todo" from "todo read book". */
