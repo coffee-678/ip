@@ -1,5 +1,6 @@
 package duncan.task;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -29,6 +30,36 @@ public class Event extends Task {
         assert to != null;
         this.from = from;
         this.to = to;
+    }
+
+    /**
+     * Moves this event to new start and end dates. Whether it is done is unchanged.
+     *
+     * @param newFrom The new date this event starts.
+     * @param newTo The new date this event ends.
+     */
+    public void reschedule(LocalDate newFrom, LocalDate newTo) {
+        assert newFrom != null;
+        assert newTo != null;
+        from = newFrom;
+        to = newTo;
+    }
+
+    /**
+     * Pushes both of this event's dates back by the given number of days.
+     * Whether it is done is unchanged.
+     *
+     * @param days How many days later the event starts and ends, at least 1.
+     * @throws DateTimeException If either new date is beyond the latest supported date,
+     *     in which case neither date is changed.
+     */
+    public void snooze(int days) throws DateTimeException {
+        assert days >= 1;
+        // Work out both dates before changing either, so a failure leaves the event as it was.
+        LocalDate newFrom = from.plusDays(days);
+        LocalDate newTo = to.plusDays(days);
+        from = newFrom;
+        to = newTo;
     }
 
     /** Returns this event as a file line, e.g. "E\t0\tproject fair\t2019-12-01\t2019-12-02". */

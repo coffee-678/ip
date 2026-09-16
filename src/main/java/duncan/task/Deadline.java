@@ -1,5 +1,6 @@
 package duncan.task;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -25,6 +26,29 @@ public class Deadline extends Task {
         super(description);
         assert by != null;
         this.by = by;
+    }
+
+    /**
+     * Moves this deadline to a new due date. Whether it is done is unchanged.
+     *
+     * @param newBy The new date this task is due.
+     */
+    public void reschedule(LocalDate newBy) {
+        assert newBy != null;
+        by = newBy;
+    }
+
+    /**
+     * Pushes this deadline's due date back by the given number of days.
+     * Whether it is done is unchanged.
+     *
+     * @param days How many days later the task is due, at least 1.
+     * @throws DateTimeException If the new date is beyond the latest supported date,
+     *     in which case the due date is left unchanged.
+     */
+    public void snooze(int days) throws DateTimeException {
+        assert days >= 1;
+        by = by.plusDays(days);
     }
 
     /** Returns this deadline as a file line, e.g. "D\t0\treturn book\t2019-12-02". */

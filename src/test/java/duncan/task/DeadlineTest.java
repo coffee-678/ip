@@ -1,7 +1,9 @@
 package duncan.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
@@ -35,5 +37,43 @@ public class DeadlineTest {
         deadline.markAsDone();
 
         assertEquals("[D][X] return book (by: Dec 2 2019)", deadline.toString());
+    }
+
+    @Test
+    public void reschedule_markedDone_dateChangedAndStillDone() {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2019, 12, 2));
+        deadline.markAsDone();
+
+        deadline.reschedule(LocalDate.of(2019, 12, 9));
+
+        assertEquals("[D][X] return book (by: Dec 9 2019)", deadline.toString());
+    }
+
+    @Test
+    public void snooze_acrossMonthEnd_dateMovedByDays() {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2019, 12, 30));
+
+        deadline.snooze(3);
+
+        assertEquals("D\t0\treturn book\t2020-01-02", deadline.toFileFormat());
+    }
+
+    @Test
+    public void snooze_markedDone_stillDone() {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2019, 12, 2));
+        deadline.markAsDone();
+
+        deadline.snooze(7);
+
+        assertEquals("[D][X] return book (by: Dec 9 2019)", deadline.toString());
+    }
+
+    @Test
+    public void snooze_pastLatestSupportedDate_exceptionThrownAndDateUnchanged() {
+        Deadline deadline = new Deadline("return book", LocalDate.MAX);
+
+        assertThrows(DateTimeException.class, () -> deadline.snooze(1));
+
+        assertEquals("D\t0\treturn book\t" + LocalDate.MAX, deadline.toFileFormat());
     }
 }
