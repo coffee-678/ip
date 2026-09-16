@@ -95,7 +95,7 @@ public class Parser {
     /** Parses an "event" command's arguments into the command that adds the event. */
     private static Command parseEvent(String rest) throws DuncanException {
         String[] parts = splitEventArgs(rest);
-        String description = parts[0];
+        String description = parts[0].trim();
         LocalDate from = parseDate(parts[1]);
         LocalDate to = parseDate(parts[2]);
         if (description.isEmpty()) {
@@ -163,8 +163,8 @@ public class Parser {
     /**
      * Splits an "event" command's arguments on the "/from " and "/to " markers.
      *
-     * @return a three-element array: the trimmed description, the raw "from" date
-     *         text, and the raw "to" date text
+     * @return a three-element array: the untrimmed description text, the raw "from"
+     *         date text, and the raw "to" date text
      */
     private static String[] splitEventArgs(String rest) throws DuncanException {
         int fromIndex = rest.indexOf(EVENT_FROM_MARKER);
@@ -173,7 +173,7 @@ public class Parser {
             throw new DuncanException("HEY! events must use /from and /to <date/time>");
         }
         return new String[] {
-            rest.substring(0, fromIndex).trim(),
+            rest.substring(0, fromIndex),
             rest.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex),
             rest.substring(toIndex + EVENT_TO_MARKER.length())
         };
