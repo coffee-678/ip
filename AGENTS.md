@@ -19,7 +19,7 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
   * When suggesting a Git command, briefly explain what it does.
   * Add explanatory Javadoc comments to all classes and to nontrivial methods and fields when their purpose or behavior is not obvious.
-  * Make generated code as self-explanatory as possible, and include explanatory comments where they improve understanding.
+  * Make generated code as self-explanatory as possible; add comments only where they explain what or why, not to restate the code.
   * When faced with a design choice, choose the simplest option that is sufficient for the requirements, while briefly explaining relevant more advanced alternatives.
 
 # Project-specific requirements
@@ -33,6 +33,16 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 All Java code in this project (new code and edits to existing code) must follow the `seedu-java-coding-standard` skill (SE-EDU basic + intermediate rules: https://se-education.org/guides/conventions/java/intermediate.html): naming, layout, statement style, and comment rules. Invoke it whenever writing, editing, or reviewing a `.java` file.
 
 * Advanced rules (on https://se-education.org/guides/conventions/java/index.html but not on the intermediate page) are optional: apply them only when asked, and do not report deviations from them as violations. They are: related classes in one package; class member declaration order; method modifier order; `this` only for shadowed fields; header comments on non-trivial private methods.
+
+## Code quality
+
+Follow the CS2103 textbook Code Quality guidelines (https://nus-cs2103-ay2627-s1.github.io/website/se-book-adapted/chapters/codeQuality.html). Project-specific points:
+* Methods longer than 30 LOC are candidates for shortening, not automatic violations; shorten only if it improves readability.
+* Every `switch` has a `default` branch. `default` (and a final `else`) handles "everything else" or raises an error; it is never used as the last expected option.
+* Use enums when a variable takes a small, fixed set of values.
+* Prefer explicit type conversions, and use parentheses to show grouping even when optional.
+* Name things for what they are: nouns for classes/variables, verbs for methods, plural names for collections; don't distinguish names only by a number or case.
+* When reviewing code against these guidelines, quote the guideline and apply its qualifying text; report nothing if nothing is worth fixing.
 
 ## Git
 
