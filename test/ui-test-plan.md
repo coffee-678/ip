@@ -410,15 +410,15 @@ ____________________________________________________________
 ### TC14: Find tasks matching a keyword
 
 **Aim:** Check that `find` shows only the tasks whose description contains
-the keyword, numbered from 1 within the matches (not their original
-position in the full list).
+the keyword, each numbered by its position in the full list (the number
+`mark`, `delete` etc. use), not renumbered from 1.
 
 **Input:**
 
 ```text
+event project fair /from 2019-12-01 /to 2019-12-02
 todo read book
 deadline return book /by 2019-12-02
-event project fair /from 2019-12-01 /to 2019-12-02
 find book
 ```
 
@@ -427,26 +427,26 @@ find book
 ```text
 ____________________________________________________________
 Got it. I've added this task:
-  [T][ ] read book
+  [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)
 Now you have 1 tasks in the list.
 ____________________________________________________________
 
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Dec 2 2019)
+  [T][ ] read book
 Now you have 2 tasks in the list.
 ____________________________________________________________
 
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project fair (from: Dec 1 2019 to: Dec 2 2019)
+  [D][ ] return book (by: Dec 2 2019)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 
 ____________________________________________________________
 Here are the matching tasks in your list:
-1.[T][ ] read book
-2.[D][ ] return book (by: Dec 2 2019)
+2.[T][ ] read book
+3.[D][ ] return book (by: Dec 2 2019)
 ____________________________________________________________
 ```
 

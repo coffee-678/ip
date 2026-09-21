@@ -55,6 +55,17 @@ public class DuncanTest {
     }
 
     @Test
+    public void getResponse_findAfterNonMatchingTask_resultsUseListNumbers() {
+        Duncan duncan = createDuncan();
+        duncan.getResponse("todo buy milk");
+        duncan.getResponse("todo read book");
+
+        assertEquals("Here are the matching tasks in your list:" + NEWLINE
+                + "2.[T][ ] read book" + NEWLINE,
+                duncan.getResponse("find book"));
+    }
+
+    @Test
     public void isExit_byeCommand_trueOnlyAfterBye() {
         Duncan duncan = createDuncan();
         assertFalse(duncan.isExit());

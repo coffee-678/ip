@@ -82,7 +82,12 @@ Format: `find KEYWORD`
 
 Example: `find book`
 
-The results are numbered from 1 again, so they may not match the numbers in `list`. Use `list` to check a task's number before you mark, unmark, delete, reschedule or snooze it.
+Each result keeps its number from `list`, so you can use it straight away in `mark`, `delete` and the other commands. For example, if task 1 is `project fair` and tasks 2 and 3 contain "book", the results are numbered 2 and 3:
+
+```
+2. T ○ read book
+3. D ○ return book (by: Mar 25 2026)
+```
 
 ### Marking a task as done: `mark`
 
