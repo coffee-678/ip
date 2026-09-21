@@ -13,6 +13,8 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -141,6 +143,66 @@ public class DuncanTest {
 
         assertTrue(welcome.startsWith("WARNING: skipped bad lines in " + savePath + ": 1" + NEWLINE));
         assertTrue(welcome.endsWith("Hello! I'm Duncan." + NEWLINE + "What can I do for you?" + NEWLINE));
+    }
+
+    @Test
+    public void getResponseLines_unknownCommand_singleErrorLine() {
+        assertEquals(List.of(new Ui.MessageLine("HEY! idk what's that supposed to be", Ui.Severity.ERROR)),
+                createDuncan().getResponseLines("blah"));
+    }
+
+    @Test
+    public void getResponseLines_validCommand_allLinesNormal() {
+        List<Ui.MessageLine> lines = createDuncan().getResponseLines("todo read book");
+
+        assertEquals(Ui.Severity.NORMAL, Ui.getHighestSeverity(lines));
+        assertEquals(3, lines.size());
+    }
+
+    @Test
+    public void getResponseLines_sameCommand_sameTextAsGetResponse() {
+        Duncan linesDuncan = new Duncan(tempDir.resolve("lines.txt").toString());
+        Duncan stringDuncan = new Duncan(tempDir.resolve("string.txt").toString());
+
+        String joinedLines = linesDuncan.getResponseLines("todo read book").stream()
+                .map(line -> line.text() + NEWLINE)
+                .collect(Collectors.joining());
+
+        assertEquals(stringDuncan.getResponse("todo read book"), joinedLines);
+    }
+
+    @Test
+    public void getResponseLines_saveFails_onlyTheWarningLineIsWarning() throws IOException {
+        Duncan duncan = createDuncan();
+        Files.createDirectory(tempDir.resolve("tasks.txt"));
+
+        List<Ui.MessageLine> lines = duncan.getResponseLines("todo read book");
+
+        assertEquals(4, lines.size());
+        assertEquals(Ui.Severity.NORMAL, lines.get(2).severity());
+        assertEquals(Ui.Severity.WARNING, lines.get(3).severity());
+        assertTrue(lines.get(3).text().startsWith("WARNING: that change was made but NOT saved:"));
+        assertEquals(Ui.Severity.WARNING, Ui.getHighestSeverity(lines));
+    }
+
+    @Test
+    public void getWelcomeLines_saveFileHasBadLine_everyLoadWarningLineIsWarning() throws IOException {
+        Path savePath = tempDir.resolve("tasks.txt");
+        Files.writeString(savePath, "garbage\n");
+
+        List<Ui.MessageLine> lines = new Duncan(savePath.toString()).getWelcomeLines();
+
+        // The second warning is the backup notice, which carries no "WARNING:" prefix.
+        assertEquals(4, lines.size());
+        assertEquals(Ui.Severity.WARNING, lines.get(0).severity());
+        assertEquals(Ui.Severity.WARNING, lines.get(1).severity());
+        assertEquals(new Ui.MessageLine("Hello! I'm Duncan.", Ui.Severity.NORMAL), lines.get(2));
+        assertEquals(new Ui.MessageLine("What can I do for you?", Ui.Severity.NORMAL), lines.get(3));
+    }
+
+    @Test
+    public void getBanner_anyDuncan_sameBannerAsUi() {
+        assertEquals(new Ui().getBanner(), createDuncan().getBanner());
     }
 
     @Test

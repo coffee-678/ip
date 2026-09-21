@@ -3,6 +3,7 @@ package duncan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -65,5 +66,75 @@ public class UiTest {
 
         assertEquals("HEY! this task number is bad" + NEWLINE, ui.flushOutput());
         assertEquals("", ui.flushOutput());
+    }
+
+    @Test
+    public void flushOutput_warningShown_sameTextAsAnError() {
+        Ui warningUi = new Ui();
+        Ui errorUi = new Ui();
+
+        warningUi.showWarning("WARNING: that change was made but NOT saved: disk full");
+        errorUi.showError("WARNING: that change was made but NOT saved: disk full");
+
+        assertEquals(errorUi.flushOutput(), warningUi.flushOutput());
+    }
+
+    @Test
+    public void flushLines_mixedMessages_eachLineKeepsItsSeverity() {
+        Ui ui = new Ui();
+
+        ui.showTaskAdded(new Todo("read book"), 1);
+        ui.showWarning("WARNING: not saved");
+        ui.showError("HEY! bad");
+
+        assertEquals(List.of(
+                new Ui.MessageLine("Got it. I've added this task:", Ui.Severity.NORMAL),
+                new Ui.MessageLine("  [T][ ] read book", Ui.Severity.NORMAL),
+                new Ui.MessageLine("Now you have 1 tasks in the list.", Ui.Severity.NORMAL),
+                new Ui.MessageLine("WARNING: not saved", Ui.Severity.WARNING),
+                new Ui.MessageLine("HEY! bad", Ui.Severity.ERROR)),
+                ui.flushLines());
+    }
+
+    @Test
+    public void flushLines_calledTwice_bufferClearedAfterFirstCall() {
+        Ui ui = new Ui();
+        ui.showError("HEY! bad");
+
+        ui.flushLines();
+
+        assertEquals(List.of(), ui.flushLines());
+        assertEquals("", ui.flushOutput());
+    }
+
+    @Test
+    public void getHighestSeverity_noLines_normal() {
+        assertEquals(Ui.Severity.NORMAL, Ui.getHighestSeverity(List.of()));
+    }
+
+    @Test
+    public void getHighestSeverity_normalAndWarning_warning() {
+        List<Ui.MessageLine> lines = List.of(
+                new Ui.MessageLine("Got it.", Ui.Severity.NORMAL),
+                new Ui.MessageLine("WARNING: not saved", Ui.Severity.WARNING));
+
+        assertEquals(Ui.Severity.WARNING, Ui.getHighestSeverity(lines));
+    }
+
+    @Test
+    public void getHighestSeverity_warningAndError_errorWhicheverComesFirst() {
+        Ui.MessageLine warning = new Ui.MessageLine("WARNING: not saved", Ui.Severity.WARNING);
+        Ui.MessageLine error = new Ui.MessageLine("HEY! bad", Ui.Severity.ERROR);
+
+        assertEquals(Ui.Severity.ERROR, Ui.getHighestSeverity(List.of(warning, error)));
+        assertEquals(Ui.Severity.ERROR, Ui.getHighestSeverity(List.of(error, warning)));
+    }
+
+    @Test
+    public void getBanner_anyUi_eightLinesWithoutTrailingLineBreak() {
+        String banner = new Ui().getBanner();
+
+        assertEquals(8, banner.split("\n", -1).length);
+        assertEquals("/", banner.substring(1, 2));
     }
 }
