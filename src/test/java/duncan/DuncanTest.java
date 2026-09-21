@@ -73,11 +73,26 @@ public class DuncanTest {
     }
 
     @Test
-    public void getResponse_rescheduleEventWithToBeforeFrom_missingFromToMessageReturned() {
+    public void getResponse_rescheduleEventWithToBeforeFrom_fromBeforeToMessageReturned() {
         Duncan duncan = createDuncan();
         duncan.getResponse("event project fair /from 2019-12-01 /to 2019-12-02");
 
-        assertEquals("HEY! events must use /from and /to <date/time>" + NEWLINE,
+        assertEquals("HEY! /from must come before /to" + NEWLINE,
                 duncan.getResponse("reschedule 1 /to 2019-12-06 /from 2019-12-05"));
+    }
+
+    @Test
+    public void getResponse_eventWithToBeforeFrom_errorMessageReturnedInsteadOfCrash() {
+        assertEquals("HEY! /from must come before /to" + NEWLINE,
+                createDuncan().getResponse("event x /to 2019-12-02 /from 2019-12-01"));
+    }
+
+    @Test
+    public void getResponse_tabInDescription_savedAsSpaceAndSurvivesRestart() {
+        createDuncan().getResponse("todo read\tbook");
+
+        assertEquals("Here are the tasks in your list:" + NEWLINE
+                + "1.[T][ ] read book" + NEWLINE,
+                createDuncan().getResponse("list"));
     }
 }

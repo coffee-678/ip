@@ -20,6 +20,9 @@ public abstract class Command {
     /** Error shown when an event is given without both its "/from" and "/to" dates. */
     public static final String MESSAGE_MISSING_FROM_TO = "HEY! events must use /from and /to <date/time>";
 
+    /** Error shown when an event's "/to" date is given before its "/from" date. */
+    public static final String MESSAGE_TO_BEFORE_FROM = "HEY! /from must come before /to";
+
     /** Error shown when a task without dates (i.e. a todo) is asked to be rescheduled or snoozed. */
     public static final String MESSAGE_CANNOT_RESCHEDULE = "HEY! only deadlines and events can be rescheduled";
 

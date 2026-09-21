@@ -260,4 +260,129 @@ public class ParserTest {
 
         assertEquals("HEY! idk what's that supposed to be", e.getMessage());
     }
+
+    // ---- spaces and tabs ----
+
+    @Test
+    public void parse_leadingAndTrailingSpaces_commandRecognised() throws DuncanException {
+        assertInstanceOf(ListCommand.class, Parser.parse("   list   "));
+        assertInstanceOf(MarkCommand.class, Parser.parse("  mark 1"));
+    }
+
+    @Test
+    public void parse_tabsInsteadOfSpaces_commandRecognised() throws DuncanException {
+        assertInstanceOf(ListCommand.class, Parser.parse("\tlist"));
+        assertInstanceOf(AddCommand.class, Parser.parse("todo\tread book"));
+        assertInstanceOf(AddCommand.class, Parser.parse("deadline\treturn book\t/by\t2019-12-02"));
+    }
+
+    // ---- commands that take no arguments ----
+
+    @Test
+    public void parse_listWithExtraText_exceptionThrown() {
+        assertParseError("list extra", "HEY! list doesn't take anything after it");
+    }
+
+    @Test
+    public void parse_byeWithExtraText_exceptionThrown() {
+        assertParseError("bye now", "HEY! bye doesn't take anything after it");
+    }
+
+    // ---- repeated markers ----
+
+    @Test
+    public void parse_deadlineWithRepeatedBy_exceptionThrown() {
+        assertParseError("deadline x /by 2019-12-02 /by 2019-12-03", "HEY! /by can only be given once");
+        assertParseError("deadline x /by 2019-12-02 /by", "HEY! /by can only be given once");
+    }
+
+    @Test
+    public void parse_eventWithRepeatedFromOrTo_exceptionThrown() {
+        assertParseError("event x /from 2019-12-01 /from 2019-12-02 /to 2019-12-03",
+                "HEY! /from can only be given once");
+        assertParseError("event x /from 2019-12-01 /to 2019-12-02 /to 2019-12-03",
+                "HEY! /to can only be given once");
+    }
+
+    @Test
+    public void parse_rescheduleWithRepeatedMarker_exceptionThrown() {
+        assertParseError("reschedule 1 /by 2019-12-02 /by 2019-12-03", "HEY! /by can only be given once");
+        assertParseError("reschedule 1 /from 2019-12-01 /from 2019-12-02 /to 2019-12-03",
+                "HEY! /from can only be given once");
+        assertParseError("reschedule 1 /from 2019-12-01 /to 2019-12-02 /to 2019-12-03",
+                "HEY! /to can only be given once");
+    }
+
+    // ---- markers in descriptions ----
+
+    @Test
+    public void parse_deadlineDescriptionWithMarkerWord_exceptionThrown() {
+        assertParseError("deadline meet /to discuss /by 2019-12-02",
+                "HEY! the description can't contain /by, /from or /to");
+    }
+
+    @Test
+    public void parse_eventDescriptionWithMarkerWord_exceptionThrown() {
+        assertParseError("event meet /by noon /from 2019-12-01 /to 2019-12-02",
+                "HEY! the description can't contain /by, /from or /to");
+    }
+
+    @Test
+    public void parse_markerOnlyPartOfWordInDescription_addCommandReturned() throws DuncanException {
+        assertInstanceOf(AddCommand.class, Parser.parse("deadline fix /toolbox /by 2019-12-02"));
+    }
+
+    @Test
+    public void parse_todoDescriptionWithMarkerWord_addCommandReturned() throws DuncanException {
+        assertInstanceOf(AddCommand.class, Parser.parse("todo read /by chapter /to 5"));
+    }
+
+    // ---- order of event dates ----
+
+    @Test
+    public void parse_eventWithToBeforeFrom_exceptionThrown() {
+        assertParseError("event x /to 2019-12-02 /from 2019-12-01", "HEY! /from must come before /to");
+    }
+
+    @Test
+    public void parse_rescheduleWithToBeforeFrom_exceptionThrown() {
+        assertParseError("reschedule 1 /to 2019-12-02 /from 2019-12-01", "HEY! /from must come before /to");
+    }
+
+    @Test
+    public void parse_eventEndingBeforeItStarts_exceptionThrown() {
+        assertParseError("event x /from 2019-12-05 /to 2019-12-01", "HEY! an event can't end before it starts");
+    }
+
+    @Test
+    public void parse_rescheduleEndingBeforeItStarts_exceptionThrown() {
+        assertParseError("reschedule 1 /from 2019-12-05 /to 2019-12-01",
+                "HEY! an event can't end before it starts");
+    }
+
+    @Test
+    public void parse_eventStartingAndEndingSameDay_addCommandReturned() throws DuncanException {
+        assertInstanceOf(AddCommand.class, Parser.parse("event x /from 2019-12-01 /to 2019-12-01"));
+        assertInstanceOf(RescheduleCommand.class, Parser.parse("reschedule 1 /from 2019-12-01 /to 2019-12-01"));
+    }
+
+    // ---- signed numbers ----
+
+    @Test
+    public void parse_taskNumberWithPlusSign_exceptionThrown() {
+        assertParseError("mark +2", "HEY! this task number is bad");
+        assertParseError("snooze +1 3", "HEY! this task number is bad");
+    }
+
+    @Test
+    public void parse_snoozeDaysWithPlusSign_exceptionThrown() {
+        assertParseError("snooze 1 +3", "HEY! the number of days is bad");
+    }
+
+    /** Asserts that parsing {@code input} fails with exactly {@code expectedMessage}. */
+    private static void assertParseError(String input, String expectedMessage) {
+        DuncanException e = assertThrows(DuncanException.class, () -> Parser.parse(input));
+
+        assertEquals(expectedMessage, e.getMessage());
+    }
 }
