@@ -107,6 +107,14 @@ public class Ui {
     }
 
     /**
+     * Returns whether there is another line of console input to read, waiting
+     * for one if needed. False once the input has ended, e.g. after Ctrl-D.
+     */
+    public boolean hasNextCommand() {
+        return scanner.hasNextLine();
+    }
+
+    /**
      * Shows the current task list, numbered from 1 in the order the tasks
      * were added.
      */

@@ -1,10 +1,16 @@
 package duncan;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -135,5 +141,21 @@ public class DuncanTest {
 
         assertTrue(welcome.startsWith("WARNING: skipped bad lines in " + savePath + ": 1" + NEWLINE));
         assertTrue(welcome.endsWith("Hello! I'm Duncan." + NEWLINE + "What can I do for you?" + NEWLINE));
+    }
+
+    @Test
+    public void run_consoleInputEndsWithoutBye_returnsWithoutException() {
+        InputStream originalIn = System.in;
+        PrintStream originalOut = System.out;
+        try {
+            System.setIn(new ByteArrayInputStream("list\n".getBytes(StandardCharsets.UTF_8)));
+            System.setOut(new PrintStream(new ByteArrayOutputStream(), true, StandardCharsets.UTF_8));
+            Duncan duncan = createDuncan();
+
+            assertDoesNotThrow(duncan::run);
+        } finally {
+            System.setIn(originalIn);
+            System.setOut(originalOut);
+        }
     }
 }

@@ -16,6 +16,8 @@ public class Duncan {
     /** Where the task list is kept between runs, relative to the project root. */
     private static final String DATA_FILE_PATH = "data/duncan.txt";
 
+    private static final String MESSAGE_UNEXPECTED_ERROR = "HEY! something went wrong: ";
+
     private final Ui ui;
     private final Storage storage;
     private final TaskList tasks;
@@ -70,6 +72,9 @@ public class Duncan {
             isExit = c.isExit();
         } catch (DuncanException e) {
             ui.showError(e.getMessage());
+        } catch (RuntimeException e) {
+            // A safety net for bugs: no input should crash the program or leave the user without a reply.
+            ui.showError(MESSAGE_UNEXPECTED_ERROR + e.getMessage());
         }
         return ui.flushOutput();
     }
@@ -79,11 +84,14 @@ public class Duncan {
         return isExit;
     }
 
-    /** Greets the user, then reads and carries out commands until told to exit. */
+    /**
+     * Greets the user, then reads and carries out commands until told to
+     * exit, or until the console input ends.
+     */
     public void run() {
         ui.showWelcome();
         flushToConsole();
-        while (!isExit) {
+        while (!isExit && ui.hasNextCommand()) {
             String fullCommand = ui.readCommand();
 
             ui.showLine();
