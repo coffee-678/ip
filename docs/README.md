@@ -2,7 +2,7 @@
 
 **Duncan** is a small chatbot that keeps track of your tasks. You type short commands, and Duncan adds, updates and finds your todos, deadlines and events for you. Your list is saved automatically, so it is still there next time.
 
-![Duncan's window](Ui.png)
+<img src="Ui.png" alt="Duncan's window" width="400">
 
 ## Quick start
 
