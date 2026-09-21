@@ -177,3 +177,4 @@ If Duncan can't write to the file at any other time, it warns you that the chang
 ## Credits
 
 * **JetBrains Mono** (the monospace font in the GUI): by JetBrains, from https://github.com/JetBrains/JetBrainsMono, licensed under the SIL Open Font License 1.1. The licence text is bundled at `src/main/resources/fonts/OFL.txt`.
+* **AI assistance:** parts of the code, tests and this user guide were produced with the help of Claude (Anthropic), via Claude Code, and reviewed and edited by me.
