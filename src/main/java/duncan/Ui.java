@@ -144,6 +144,16 @@ public class Ui {
                 "  " + task);
     }
 
+    /** Shows that the task with the given 1-based number was already done, so nothing changed. */
+    public void showTaskAlreadyMarked(int taskNumber) {
+        showLines("Task " + taskNumber + " is already marked as done");
+    }
+
+    /** Shows that the task with the given 1-based number was already not done, so nothing changed. */
+    public void showTaskAlreadyUnmarked(int taskNumber) {
+        showLines("Task " + taskNumber + " is already marked as not done");
+    }
+
     /**
      * Reports that a task was moved to new dates, showing it before and after.
      *

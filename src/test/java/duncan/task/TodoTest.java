@@ -1,6 +1,10 @@
 package duncan.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
@@ -70,5 +74,30 @@ public class TodoTest {
         todo.markAsNotDone();
 
         assertEquals(" ", todo.getStatusIcon());
+    }
+
+    // ---- isDuplicateOf ----
+
+    @Test
+    public void isDuplicateOf_sameDescriptionDifferentCaseAndSpacing_true() {
+        assertTrue(new Todo("Read  Book").isDuplicateOf(new Todo("  read book ")));
+    }
+
+    @Test
+    public void isDuplicateOf_oneMarkedDone_stillTrue() {
+        Todo done = new Todo("read book");
+        done.markAsDone();
+
+        assertTrue(new Todo("read book").isDuplicateOf(done));
+    }
+
+    @Test
+    public void isDuplicateOf_differentDescription_false() {
+        assertFalse(new Todo("read book").isDuplicateOf(new Todo("read books")));
+    }
+
+    @Test
+    public void isDuplicateOf_deadlineWithSameDescription_false() {
+        assertFalse(new Todo("read book").isDuplicateOf(new Deadline("read book", LocalDate.of(2019, 12, 2))));
     }
 }

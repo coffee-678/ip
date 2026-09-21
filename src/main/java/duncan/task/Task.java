@@ -11,6 +11,9 @@ public abstract class Task {
     /** Separates the fields within one task's line in the save file. */
     public static final String FIELD_SEPARATOR = "\t";
 
+    /** Matches a run of one or more whitespace characters, e.g. "  " in "read  book". */
+    private static final String WHITESPACE_RUN = "\\s+";
+
     protected String description;
     protected boolean isDone;
 
@@ -32,6 +35,30 @@ public abstract class Task {
     /** Returns this task's description, as typed by the user. */
     public String getDescription() {
         return description;
+    }
+
+    /** Returns whether this task is done. */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
+     * Returns whether {@code other} is the same task as this one: the same type
+     * and the same description, ignoring case, spaces around it, and how many
+     * spaces separate its words. Whether either task is done does not matter.
+     * Subclasses with dates also require the dates to match.
+     *
+     * @param other The task to compare with.
+     * @return true if the two count as the same task.
+     */
+    public boolean isDuplicateOf(Task other) {
+        return getClass() == other.getClass()
+                && normalize(description).equalsIgnoreCase(normalize(other.description));
+    }
+
+    /** Returns {@code text} without surrounding whitespace, and with each run of whitespace made one space. */
+    private static String normalize(String text) {
+        return text.strip().replaceAll(WHITESPACE_RUN, " ");
     }
 
     /** Marks this task as done. */

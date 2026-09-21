@@ -62,6 +62,13 @@ public class Event extends Task {
         to = newTo;
     }
 
+    /** Returns whether {@code other} is the same task, as {@link Task} defines it, with the same dates. */
+    @Override
+    public boolean isDuplicateOf(Task other) {
+        return super.isDuplicateOf(other) && other instanceof Event event
+                && from.equals(event.from) && to.equals(event.to);
+    }
+
     /** Returns this event as a file line, e.g. "E\t0\tproject fair\t2019-12-01\t2019-12-02". */
     @Override
     public String toFileFormat() {

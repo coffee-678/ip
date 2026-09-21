@@ -51,6 +51,12 @@ public class Deadline extends Task {
         by = by.plusDays(days);
     }
 
+    /** Returns whether {@code other} is the same task, as {@link Task} defines it, with the same due date. */
+    @Override
+    public boolean isDuplicateOf(Task other) {
+        return super.isDuplicateOf(other) && other instanceof Deadline deadline && by.equals(deadline.by);
+    }
+
     /** Returns this deadline as a file line, e.g. "D\t0\treturn book\t2019-12-02". */
     @Override
     public String toFileFormat() {

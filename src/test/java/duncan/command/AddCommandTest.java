@@ -2,6 +2,7 @@ package duncan.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.file.Path;
 
@@ -29,5 +30,19 @@ public class AddCommandTest {
 
         assertEquals(1, tasks.size());
         assertSame(task, tasks.get(0));
+    }
+
+    @Test
+    public void execute_duplicateTask_exceptionThrownAndListUnchanged() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        AddCommand command = new AddCommand(new Todo("Read  Book"));
+        Storage storage = new Storage(tempDir.resolve("tasks.txt").toString());
+        Ui ui = new Ui();
+
+        DuncanException e = assertThrows(DuncanException.class, () -> command.execute(tasks, ui, storage));
+
+        assertEquals("HEY! this task is already in your list", e.getMessage());
+        assertEquals(1, tasks.size());
     }
 }

@@ -1,7 +1,9 @@
 package duncan.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -75,5 +77,19 @@ public class DeadlineTest {
         assertThrows(DateTimeException.class, () -> deadline.snooze(1));
 
         assertEquals("D\t0\treturn book\t" + LocalDate.MAX, deadline.toFileFormat());
+    }
+
+    @Test
+    public void isDuplicateOf_sameDescriptionIgnoringCaseAndSameDate_true() {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2019, 12, 2));
+
+        assertTrue(deadline.isDuplicateOf(new Deadline("Return  BOOK", LocalDate.of(2019, 12, 2))));
+    }
+
+    @Test
+    public void isDuplicateOf_differentDate_false() {
+        Deadline deadline = new Deadline("return book", LocalDate.of(2019, 12, 2));
+
+        assertFalse(deadline.isDuplicateOf(new Deadline("return book", LocalDate.of(2019, 12, 3))));
     }
 }
