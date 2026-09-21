@@ -1,7 +1,7 @@
 package duncan.task;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 
 import duncan.Storage;
 import duncan.Ui;
@@ -56,12 +56,19 @@ public class TaskList {
         return tasks.stream().anyMatch(existing -> existing.isDuplicateOf(task));
     }
 
-    /** Returns the tasks whose description contains {@code keyword} (case-insensitive). */
-    public ArrayList<Task> find(String keyword) {
+    /**
+     * Returns the tasks whose description contains {@code keyword} (case-insensitive),
+     * each keyed by its 0-based index in this list, in list order.
+     */
+    public LinkedHashMap<Integer, Task> find(String keyword) {
         String lowerCaseKeyword = keyword.toLowerCase();
-        return tasks.stream()
-                .filter(task -> task.getDescription().toLowerCase().contains(lowerCaseKeyword))
-                .collect(Collectors.toCollection(ArrayList::new));
+        LinkedHashMap<Integer, Task> matches = new LinkedHashMap<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).getDescription().toLowerCase().contains(lowerCaseKeyword)) {
+                matches.put(i, tasks.get(i));
+            }
+        }
+        return matches;
     }
 
     /** Returns the underlying list, e.g. for {@link Storage} to save or {@link Ui} to display. */

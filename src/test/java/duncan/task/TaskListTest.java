@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -186,7 +188,7 @@ public class TaskListTest {
         Task task = new Todo("Read Book");
         tasks.add(task);
 
-        ArrayList<Task> matches = tasks.find("rEAD");
+        Map<Integer, Task> matches = tasks.find("rEAD");
 
         assertEquals(1, matches.size());
         assertSame(task, matches.get(0));
@@ -196,13 +198,13 @@ public class TaskListTest {
     public void find_keywordMatchingNoTask_emptyListReturned() {
         TaskList tasks = taskListOfSize(3);
 
-        ArrayList<Task> matches = tasks.find("book");
+        Map<Integer, Task> matches = tasks.find("book");
 
         assertTrue(matches.isEmpty());
     }
 
     @Test
-    public void find_keywordMatchingSomeTasks_matchingTasksReturnedInOrder() {
+    public void find_keywordMatchingSomeTasks_matchingTasksReturnedWithOriginalIndexInOrder() {
         TaskList tasks = new TaskList();
         Task firstBook = new Todo("borrow book");
         Task nonMatch = new Todo("buy milk");
@@ -211,11 +213,11 @@ public class TaskListTest {
         tasks.add(nonMatch);
         tasks.add(secondBook);
 
-        ArrayList<Task> matches = tasks.find("book");
+        Map<Integer, Task> matches = tasks.find("book");
 
-        assertEquals(2, matches.size());
+        assertEquals(List.of(0, 2), List.copyOf(matches.keySet()));
         assertSame(firstBook, matches.get(0));
-        assertSame(secondBook, matches.get(1));
+        assertSame(secondBook, matches.get(2));
     }
 
     // ---- getTasks ----

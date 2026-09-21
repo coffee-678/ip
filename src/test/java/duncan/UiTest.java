@@ -3,12 +3,15 @@ package duncan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import duncan.task.Deadline;
 import duncan.task.Event;
+import duncan.task.Task;
 import duncan.task.Todo;
 
 public class UiTest {
@@ -30,6 +33,21 @@ public class UiTest {
                 + "  [T][ ] read book" + NEWLINE
                 + "Now you have 1 tasks in the list." + NEWLINE
                 + "Bye. Hope to see you again soon!" + NEWLINE,
+                ui.flushOutput());
+    }
+
+    @Test
+    public void showMatchingTasks_matchesFromLaterInList_originalNumbersShown() {
+        Ui ui = new Ui();
+        Map<Integer, Task> matches = new LinkedHashMap<>();
+        matches.put(1, new Todo("read book"));
+        matches.put(4, new Deadline("return book", LocalDate.of(2019, 12, 2)));
+
+        ui.showMatchingTasks(matches);
+
+        assertEquals("Here are the matching tasks in your list:" + NEWLINE
+                + "2.[T][ ] read book" + NEWLINE
+                + "5.[D][ ] return book (by: Dec 2 2019)" + NEWLINE,
                 ui.flushOutput());
     }
 

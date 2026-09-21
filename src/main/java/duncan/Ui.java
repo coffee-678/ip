@@ -2,6 +2,7 @@ package duncan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import duncan.task.Task;
@@ -190,12 +191,15 @@ public class Ui {
         }
     }
 
-    /** Shows the tasks matching a find command's keyword, numbered from 1. */
-    public void showMatchingTasks(ArrayList<Task> matches) {
+    /**
+     * Shows the tasks matching a find command's keyword, each with its number in
+     * the full task list, so that the number can be used in other commands.
+     *
+     * @param matches The matching tasks, keyed by their 0-based index in the task list.
+     */
+    public void showMatchingTasks(Map<Integer, Task> matches) {
         showLines("Here are the matching tasks in your list:");
-        for (int i = 0; i < matches.size(); i++) {
-            showLines((i + 1) + "." + matches.get(i));
-        }
+        matches.forEach((index, task) -> showLines((index + 1) + "." + task));
     }
 
     /** Reports that {@code task} was added, and how many tasks are in the list now. */
