@@ -26,7 +26,9 @@ public class Duncan {
     /**
      * Sets up a Duncan wired to the given save file: creates its {@link Ui},
      * a {@link Storage} pointing at {@code filePath}, and loads the task
-     * list saved there (or an empty list, if there is none yet).
+     * list saved there (or an empty list, if there is none yet). Any
+     * warnings from loading are queued in the {@link Ui}, so they are shown
+     * with the welcome message.
      *
      * @param filePath path to the save file, relative to the directory the
      *                 program is run from
@@ -35,6 +37,7 @@ public class Duncan {
         this.ui = new Ui();
         this.storage = new Storage(filePath);
         this.tasks = new TaskList(storage.load());
+        storage.getLoadWarnings().forEach(ui::showError);
     }
 
     /** Sets up a Duncan wired to the default save file. */

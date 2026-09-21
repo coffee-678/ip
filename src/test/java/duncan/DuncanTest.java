@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -88,11 +90,50 @@ public class DuncanTest {
     }
 
     @Test
+    public void getResponse_noDataFileAtStart_todoSavedWithoutWarnings() throws IOException {
+        Path savePath = tempDir.resolve("data/tasks.txt");
+        Duncan duncan = new Duncan(savePath.toString());
+
+        assertEquals("Hello! I'm Duncan." + NEWLINE + "What can I do for you?" + NEWLINE, duncan.getWelcome());
+        assertFalse(duncan.getResponse("todo read book").contains("WARNING"));
+        assertEquals("T\t0\tread book" + NEWLINE, Files.readString(savePath));
+    }
+
+    @Test
     public void getResponse_tabInDescription_savedAsSpaceAndSurvivesRestart() {
         createDuncan().getResponse("todo read\tbook");
 
         assertEquals("Here are the tasks in your list:" + NEWLINE
                 + "1.[T][ ] read book" + NEWLINE,
                 createDuncan().getResponse("list"));
+    }
+
+    @Test
+    public void getResponse_saveFails_changeKeptAndNotSavedWarningShownEachTime() throws IOException {
+        Duncan duncan = createDuncan();
+        Files.createDirectory(tempDir.resolve("tasks.txt"));
+        String notSavedWarning = "WARNING: that change was made but NOT saved: couldn't write to";
+
+        String firstReply = duncan.getResponse("todo read book");
+        String secondReply = duncan.getResponse("todo return book");
+
+        assertTrue(firstReply.startsWith("Got it. I've added this task:"));
+        assertTrue(firstReply.contains(notSavedWarning));
+        assertTrue(secondReply.contains(notSavedWarning));
+        assertEquals("Here are the tasks in your list:" + NEWLINE
+                + "1.[T][ ] read book" + NEWLINE
+                + "2.[T][ ] return book" + NEWLINE,
+                duncan.getResponse("list"));
+    }
+
+    @Test
+    public void getWelcome_saveFileHasBadLine_warningShownBeforeGreeting() throws IOException {
+        Path savePath = tempDir.resolve("tasks.txt");
+        Files.writeString(savePath, "garbage\n");
+
+        String welcome = new Duncan(savePath.toString()).getWelcome();
+
+        assertTrue(welcome.startsWith("WARNING: skipped bad lines in " + savePath + ": 1" + NEWLINE));
+        assertTrue(welcome.endsWith("Hello! I'm Duncan." + NEWLINE + "What can I do for you?" + NEWLINE));
     }
 }

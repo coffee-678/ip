@@ -67,7 +67,7 @@ public class RescheduleCommand extends Command {
             throw new DuncanException(MESSAGE_CANNOT_RESCHEDULE);
         }
 
-        storage.save(tasks.getTasks());
         ui.showTaskRescheduled(oldTask, task);
+        saveTasks(tasks, ui, storage);
     }
 }

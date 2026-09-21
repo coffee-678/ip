@@ -32,6 +32,9 @@ public abstract class Command {
      */
     public static final String MESSAGE_INVALID_DAYS = "HEY! the number of days is bad";
 
+    /** Warning shown after a change that was made to the list but could not be written to disk. */
+    private static final String MESSAGE_NOT_SAVED = "WARNING: that change was made but NOT saved: ";
+
     /**
      * Carries out this command: updates the task list as needed, reports
      * the result through {@code ui}, and persists any change through
@@ -57,6 +60,23 @@ public abstract class Command {
     protected static void checkTaskIndex(TaskList tasks, int taskIndex) throws DuncanException {
         if (!tasks.isValidIndex(taskIndex)) {
             throw new DuncanException(MESSAGE_INVALID_TASK_NUMBER);
+        }
+    }
+
+    /**
+     * Writes the task list to disk. If that fails, the change stays in the list
+     * for this session and a warning saying it was not saved, and why, is shown
+     * after the command's own message.
+     *
+     * @param tasks The task list to save.
+     * @param ui Where the warning is shown if saving fails.
+     * @param storage Where the task list is saved.
+     */
+    protected static void saveTasks(TaskList tasks, Ui ui, Storage storage) {
+        try {
+            storage.save(tasks.getTasks());
+        } catch (DuncanException e) {
+            ui.showError(MESSAGE_NOT_SAVED + e.getMessage());
         }
     }
 }

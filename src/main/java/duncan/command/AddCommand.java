@@ -32,7 +32,7 @@ public class AddCommand extends Command {
         }
         tasks.add(task);
         assert tasks.get(tasks.size() - 1) == task;
-        storage.save(tasks.getTasks());
         ui.showTaskAdded(task, tasks.size());
+        saveTasks(tasks, ui, storage);
     }
 }

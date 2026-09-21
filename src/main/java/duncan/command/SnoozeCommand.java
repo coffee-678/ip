@@ -52,7 +52,7 @@ public class SnoozeCommand extends Command {
             throw new DuncanException(MESSAGE_INVALID_DAYS);
         }
 
-        storage.save(tasks.getTasks());
         ui.showTaskSnoozed(oldTask, task, days);
+        saveTasks(tasks, ui, storage);
     }
 }

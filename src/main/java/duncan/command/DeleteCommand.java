@@ -25,7 +25,7 @@ public class DeleteCommand extends Command {
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         checkTaskIndex(tasks, taskIndex);
         Task removedTask = tasks.remove(taskIndex);
-        storage.save(tasks.getTasks());
         ui.showTaskDeleted(removedTask, tasks.size());
+        saveTasks(tasks, ui, storage);
     }
 }
