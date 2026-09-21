@@ -1,6 +1,7 @@
 package duncan;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import duncan.task.Task;
@@ -14,6 +15,24 @@ import duncan.task.Task;
  * the console app prints the buffer, while the GUI puts it in a dialog box.
  */
 public class Ui {
+    /**
+     * How much attention a line of output deserves. Declared from least to
+     * most severe, so a later constant outranks an earlier one.
+     */
+    public enum Severity {
+        NORMAL, WARNING, ERROR
+    }
+
+    /**
+     * One line of output together with its severity, so the GUI can style
+     * a warning or error differently without inspecting the text.
+     *
+     * @param text The line as the console prints it, without a line break.
+     * @param severity How serious the line is.
+     */
+    public record MessageLine(String text, Severity severity) {
+    }
+
     private static final String HORIZONTAL_LINE =
             "____________________________________________________________";
     private static final String BANNER =
@@ -28,13 +47,13 @@ public class Ui {
 
     private final Scanner scanner;
 
-    /** Collects the messages shown since the last {@link #flushOutput()} call. */
-    private final StringBuilder outputBuffer;
+    /** Collects the messages shown since the last flush, one entry per line. */
+    private final List<MessageLine> outputLines;
 
     /** Creates a Ui that reads console input from standard input. */
     public Ui() {
         this.scanner = new Scanner(System.in);
-        this.outputBuffer = new StringBuilder();
+        this.outputLines = new ArrayList<>();
     }
 
     /**
@@ -43,24 +62,70 @@ public class Ui {
      * writes to the console directly, and a message made of several lines
      * is added as one call rather than one call per line.
      *
+     * @param severity how serious these lines are
      * @param lines the lines to add, in the order they should be shown
      */
-    private void showLines(String... lines) {
+    private void showLines(Severity severity, String... lines) {
         for (String line : lines) {
-            outputBuffer.append(line).append(System.lineSeparator());
+            outputLines.add(new MessageLine(line, severity));
         }
     }
 
+    /** Adds ordinary lines of text to the buffer of messages waiting to be shown. */
+    private void showLines(String... lines) {
+        showLines(Severity.NORMAL, lines);
+    }
+
     /**
-     * Returns everything shown since this method was last called, and empties
-     * the buffer so the next batch of messages starts clean.
+     * Returns everything shown since the last flush as the console prints it,
+     * one line break after every line, and empties the buffer so the next
+     * batch of messages starts clean.
      *
      * @return The collected messages, or an empty string if there were none.
      */
     public String flushOutput() {
-        String output = outputBuffer.toString();
-        outputBuffer.setLength(0);
-        return output;
+        StringBuilder output = new StringBuilder();
+        for (MessageLine line : flushLines()) {
+            output.append(line.text()).append(System.lineSeparator());
+        }
+        return output.toString();
+    }
+
+    /**
+     * Returns everything shown since the last flush, keeping each line's
+     * severity, and empties the buffer so the next batch starts clean.
+     *
+     * @return The collected lines in the order they were shown, or an empty list if there were none.
+     */
+    public List<MessageLine> flushLines() {
+        List<MessageLine> lines = new ArrayList<>(outputLines);
+        outputLines.clear();
+        return lines;
+    }
+
+    /**
+     * Returns the most severe severity among the given lines.
+     *
+     * @param lines The lines to look through.
+     * @return The highest severity found, or {@link Severity#NORMAL} if there are no lines.
+     */
+    public static Severity getHighestSeverity(List<MessageLine> lines) {
+        Severity highest = Severity.NORMAL;
+        for (MessageLine line : lines) {
+            if (line.severity().compareTo(highest) > 0) {
+                highest = line.severity();
+            }
+        }
+        return highest;
+    }
+
+    /**
+     * Returns the ASCII-art banner the console app opens with, without its
+     * trailing line break. The GUI shows this as a heading of its own,
+     * separate from the greeting.
+     */
+    public String getBanner() {
+        return BANNER.stripTrailing();
     }
 
     /** Shows the banner and greeting used when the console app starts. */
@@ -196,6 +261,15 @@ public class Ui {
 
     /** Shows the message of a {@link DuncanException} caught from a bad command. */
     public void showError(String message) {
-        showLines(message);
+        showLines(Severity.ERROR, message);
+    }
+
+    /**
+     * Shows a message about something that went wrong without stopping the
+     * command, e.g. a change that could not be saved. It reads the same as
+     * an error in the console but is styled as a warning in the GUI.
+     */
+    public void showWarning(String message) {
+        showLines(Severity.WARNING, message);
     }
 }

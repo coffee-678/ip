@@ -76,7 +76,7 @@ public abstract class Command {
         try {
             storage.save(tasks.getTasks());
         } catch (DuncanException e) {
-            ui.showError(MESSAGE_NOT_SAVED + e.getMessage());
+            ui.showWarning(MESSAGE_NOT_SAVED + e.getMessage());
         }
     }
 }

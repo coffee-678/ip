@@ -1,13 +1,17 @@
 package duncan.gui;
 
+import java.util.List;
+
 import duncan.Duncan;
+import duncan.Ui;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -15,9 +19,14 @@ import javafx.util.Duration;
  * Controller for the main GUI: turns what the user types into a call on
  * {@link Duncan} and shows both sides of the conversation as dialog boxes.
  */
-public class MainWindow extends AnchorPane {
+public class MainWindow {
     /** How long the farewell stays on screen before the window closes. */
     private static final double EXIT_DELAY_IN_SECONDS = 1.5;
+
+    private static final String STYLE_LOGO = "logo";
+
+    /** The scroll position that shows the bottom of the conversation. */
+    private static final double SCROLLED_TO_BOTTOM = 1.0;
 
     @FXML
     private ScrollPane scrollPane;
@@ -33,16 +42,21 @@ public class MainWindow extends AnchorPane {
     /** Keeps the newest dialog box in view as the conversation grows. */
     @FXML
     public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        dialogContainer.heightProperty().addListener((observable, oldHeight, newHeight) ->
+                scrollPane.setVvalue(SCROLLED_TO_BOTTOM));
     }
 
     /**
-     * Injects the Duncan instance this window talks to, and shows its
-     * greeting as the first thing in the conversation.
+     * Injects the Duncan instance this window talks to, and starts the
+     * conversation with the logo followed by Duncan's greeting.
      */
     public void setDuncan(Duncan d) {
         duncan = d;
-        dialogContainer.getChildren().add(DialogBox.getDuncanDialog(duncan.getWelcome()));
+        dialogContainer.getChildren().addAll(
+                createLogo(duncan.getBanner()),
+                DialogBox.getDuncanDialog(duncan.getWelcomeLines())
+        );
+        Platform.runLater(userInput::requestFocus);
     }
 
     /**
@@ -54,15 +68,28 @@ public class MainWindow extends AnchorPane {
     private void handleUserInput() {
         assert duncan != null;
         String input = userInput.getText();
+        List<Ui.MessageLine> reply = duncan.getResponseLines(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input),
-                DialogBox.getDuncanDialog(duncan.getResponse(input))
+                DialogBox.getDuncanDialog(reply)
         );
         userInput.clear();
 
         if (duncan.isExit()) {
             closeAfterShowingGoodbye();
         }
+    }
+
+    /**
+     * Creates the ASCII-art logo. It is never wrapped or truncated, because
+     * either would scramble the picture; the window's minimum width is chosen
+     * so that it always fits.
+     */
+    private Label createLogo(String banner) {
+        Label logo = new Label(banner);
+        logo.getStyleClass().add(STYLE_LOGO);
+        logo.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        return logo;
     }
 
     /**

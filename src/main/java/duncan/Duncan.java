@@ -1,5 +1,7 @@
 package duncan;
 
+import java.util.List;
+
 import duncan.command.Command;
 import duncan.task.TaskList;
 
@@ -39,7 +41,7 @@ public class Duncan {
         this.ui = new Ui();
         this.storage = new Storage(filePath);
         this.tasks = new TaskList(storage.load());
-        storage.getLoadWarnings().forEach(ui::showError);
+        storage.getLoadWarnings().forEach(ui::showWarning);
     }
 
     /** Sets up a Duncan wired to the default save file. */
@@ -57,6 +59,21 @@ public class Duncan {
     }
 
     /**
+     * Returns the same greeting as {@link #getWelcome()}, line by line with
+     * each line's severity, so a GUI can style any load warning that comes
+     * before it.
+     */
+    public List<Ui.MessageLine> getWelcomeLines() {
+        ui.showGreeting();
+        return ui.flushLines();
+    }
+
+    /** Returns the ASCII-art banner the console app opens with, for a GUI to show as a heading. */
+    public String getBanner() {
+        return ui.getBanner();
+    }
+
+    /**
      * Carries out one line of user input and returns everything Duncan has
      * to say in reply, including the message of any error the command ran
      * into. This is the whole of Duncan's behaviour as far as a GUI is
@@ -66,6 +83,25 @@ public class Duncan {
      * @return Duncan's reply, as one or more lines of text.
      */
     public String getResponse(String input) {
+        carryOut(input);
+        return ui.flushOutput();
+    }
+
+    /**
+     * Carries out one line of user input like {@link #getResponse(String)},
+     * but returns the reply line by line with each line's severity, so a GUI
+     * can tell errors and warnings apart from ordinary output.
+     *
+     * @param input one line as typed by the user, e.g. {@code "todo read book"}
+     * @return Duncan's reply, one entry per line.
+     */
+    public List<Ui.MessageLine> getResponseLines(String input) {
+        carryOut(input);
+        return ui.flushLines();
+    }
+
+    /** Runs one line of input, leaving whatever Duncan has to say waiting in the {@link Ui}. */
+    private void carryOut(String input) {
         try {
             Command c = Parser.parse(input);
             c.execute(tasks, ui, storage);
@@ -76,7 +112,6 @@ public class Duncan {
             // A safety net for bugs: no input should crash the program or leave the user without a reply.
             ui.showError(MESSAGE_UNEXPECTED_ERROR + e.getMessage());
         }
-        return ui.flushOutput();
     }
 
     /** Returns whether the last command handled asked to end the session. */
