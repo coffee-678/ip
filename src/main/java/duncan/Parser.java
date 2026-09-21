@@ -2,6 +2,7 @@ package duncan;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 
 import duncan.command.AddCommand;
 import duncan.command.Command;
@@ -28,21 +29,36 @@ public class Parser {
     private static final String EVENT_FROM_MARKER = "/from ";
     private static final String EVENT_TO_MARKER = "/to ";
 
+    // The markers as whole words, for checking where and how often a marker appears.
+    private static final String BY_WORD = "/by";
+    private static final String FROM_WORD = "/from";
+    private static final String TO_WORD = "/to";
+
+    /** Matches a whole number typed with ASCII digits only, e.g. "12" but not "+12" or "-1". */
+    private static final String DIGITS_PATTERN = "[0-9]+";
+
     private static final String MESSAGE_EMPTY_DESCRIPTION = "HEY! the description can't be left empty";
+    private static final String MESSAGE_UNEXPECTED_ARGUMENTS = "HEY! %s doesn't take anything after it";
+    private static final String MESSAGE_REPEATED_MARKER = "HEY! %s can only be given once";
+    private static final String MESSAGE_MARKER_IN_DESCRIPTION = "HEY! the description can't contain /by, /from or /to";
+    private static final String MESSAGE_END_BEFORE_START = "HEY! an event can't end before it starts";
 
     /**
      * Parses one full line of console input into the {@link Command} it
-     * represents.
+     * represents. Tabs are treated as spaces, and spaces around the whole
+     * line are ignored.
      *
      * @throws DuncanException if the line is not a recognised command, or a
      *         recognised command's arguments are malformed
      */
     public static Command parse(String fullCommand) throws DuncanException {
-        String commandWord = getCommandWord(fullCommand);
-        String rest = getArguments(fullCommand);
+        String input = fullCommand.replace('\t', ' ').strip();
+        String commandWord = getCommandWord(input);
+        String rest = getArguments(input);
 
         switch (commandWord) {
             case "list":
+                checkNoArguments(commandWord, rest);
                 return new ListCommand();
             case "find":
                 return parseFind(rest);
@@ -63,6 +79,7 @@ public class Parser {
             case "snooze":
                 return parseSnooze(rest);
             case "bye":
+                checkNoArguments(commandWord, rest);
                 return new ExitCommand();
             default:
                 throw new DuncanException("HEY! idk what's that supposed to be");
@@ -89,24 +106,24 @@ public class Parser {
 
     /** Parses a "deadline" command's arguments into the command that adds the deadline. */
     private static Command parseDeadline(String rest) throws DuncanException {
+        checkMarkerGivenOnce(rest, BY_WORD);
         String[] parts = splitDeadlineArgs(rest);
         String description = parts[0].trim();
         LocalDate by = parseDate(parts[1]);
-        if (description.isEmpty()) {
-            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
-        }
+        checkDatedTaskDescription(description);
         return new AddCommand(new Deadline(description, by));
     }
 
     /** Parses an "event" command's arguments into the command that adds the event. */
     private static Command parseEvent(String rest) throws DuncanException {
+        checkMarkerGivenOnce(rest, FROM_WORD);
+        checkMarkerGivenOnce(rest, TO_WORD);
         String[] parts = splitEventArgs(rest);
         String description = parts[0].trim();
         LocalDate from = parseDate(parts[1]);
         LocalDate to = parseDate(parts[2]);
-        if (description.isEmpty()) {
-            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
-        }
+        checkDatedTaskDescription(description);
+        checkEventOrder(from, to);
         return new AddCommand(new Event(description, from, to));
     }
 
@@ -118,12 +135,17 @@ public class Parser {
      * command can see. So a form that is missing, or has other text before its first
      * marker, is not an error here: its dates are left null for the command to report.
      *
-     * @throws DuncanException if the task number is bad, or a date given is not yyyy-mm-dd
+     * @throws DuncanException if the task number is bad, a marker is repeated, "/to"
+     *         comes before "/from", a date given is not yyyy-mm-dd, or the new event
+     *         dates end before they start
      */
     private static Command parseReschedule(String rest) throws DuncanException {
         String[] parts = rest.trim().split(" ", 2);
         int taskIndex = parseTaskIndex(parts[0]);
         String dateArgs = parts.length > 1 ? parts[1] : "";
+        checkMarkerGivenOnce(dateArgs, BY_WORD);
+        checkMarkerGivenOnce(dateArgs, FROM_WORD);
+        checkMarkerGivenOnce(dateArgs, TO_WORD);
 
         LocalDate by = null;
         int byIndex = dateArgs.indexOf(DEADLINE_BY_MARKER);
@@ -135,10 +157,12 @@ public class Parser {
         LocalDate to = null;
         int fromIndex = dateArgs.indexOf(EVENT_FROM_MARKER);
         int toIndex = dateArgs.indexOf(EVENT_TO_MARKER);
+        checkFromBeforeTo(fromIndex, toIndex);
         boolean hasFromThenTo = fromIndex != -1 && toIndex > fromIndex;
         if (hasFromThenTo && dateArgs.substring(0, fromIndex).isBlank()) {
             from = parseDate(dateArgs.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex));
             to = parseDate(dateArgs.substring(toIndex + EVENT_TO_MARKER.length()));
+            checkEventOrder(from, to);
         }
 
         return new RescheduleCommand(taskIndex, by, from, to);
@@ -163,10 +187,15 @@ public class Parser {
      * @throws DuncanException if the text is not a positive whole number
      */
     private static int parseDays(String daysText) throws DuncanException {
+        String digits = daysText.trim();
+        if (!digits.matches(DIGITS_PATTERN)) {
+            throw new DuncanException(Command.MESSAGE_INVALID_DAYS);
+        }
         int days;
         try {
-            days = Integer.parseInt(daysText.trim());
+            days = Integer.parseInt(digits);
         } catch (NumberFormatException e) {
+            // Digits only, but too large to fit in an int.
             throw new DuncanException(Command.MESSAGE_INVALID_DAYS);
         }
         if (days < 1) {
@@ -201,15 +230,21 @@ public class Parser {
 
     /**
      * Converts a task number typed by the user into a 0-based list index.
-     * Only checks that the text is a positive whole number; whether that
-     * number actually refers to a task in the current list is for the
-     * command itself to check, since only it knows the list's current size.
+     * Only checks that the text is a positive whole number written with
+     * digits only (no sign); whether that number actually refers to a task
+     * in the current list is for the command itself to check, since only it
+     * knows the list's current size.
      */
     private static int parseTaskIndex(String rest) throws DuncanException {
+        String digits = rest.trim();
+        if (!digits.matches(DIGITS_PATTERN)) {
+            throw new DuncanException(Command.MESSAGE_INVALID_TASK_NUMBER);
+        }
         int taskNumber;
         try {
-            taskNumber = Integer.parseInt(rest.trim());
+            taskNumber = Integer.parseInt(digits);
         } catch (NumberFormatException e) {
+            // Digits only, but too large to fit in an int.
             throw new DuncanException(Command.MESSAGE_INVALID_TASK_NUMBER);
         }
         if (taskNumber < 1) {
@@ -243,10 +278,63 @@ public class Parser {
         if (fromIndex == -1 || toIndex == -1) {
             throw new DuncanException(Command.MESSAGE_MISSING_FROM_TO);
         }
+        checkFromBeforeTo(fromIndex, toIndex);
         return new String[] {
             rest.substring(0, fromIndex),
             rest.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex),
             rest.substring(toIndex + EVENT_TO_MARKER.length())
         };
+    }
+
+    /** Throws if anything was typed after a command word that takes no arguments. */
+    private static void checkNoArguments(String commandWord, String rest) throws DuncanException {
+        if (!rest.isBlank()) {
+            throw new DuncanException(String.format(MESSAGE_UNEXPECTED_ARGUMENTS, commandWord));
+        }
+    }
+
+    /**
+     * Throws if {@code markerWord} (e.g. "/by") appears as a word more than once in
+     * {@code args}, since only one value can be used for it.
+     */
+    private static void checkMarkerGivenOnce(String args, String markerWord) throws DuncanException {
+        long count = Arrays.stream(args.split(" "))
+                .filter(markerWord::equals)
+                .count();
+        if (count > 1) {
+            throw new DuncanException(String.format(MESSAGE_REPEATED_MARKER, markerWord));
+        }
+    }
+
+    /**
+     * Throws if a deadline's or event's description is empty, or contains a marker
+     * word, which would make it unclear where the description ends.
+     */
+    private static void checkDatedTaskDescription(String description) throws DuncanException {
+        if (description.isEmpty()) {
+            throw new DuncanException(MESSAGE_EMPTY_DESCRIPTION);
+        }
+        boolean hasMarker = Arrays.stream(description.split(" "))
+                .anyMatch(word -> word.equals(BY_WORD) || word.equals(FROM_WORD) || word.equals(TO_WORD));
+        if (hasMarker) {
+            throw new DuncanException(MESSAGE_MARKER_IN_DESCRIPTION);
+        }
+    }
+
+    /**
+     * Throws if both "/from " and "/to " were found, but "/to " comes first.
+     * An index of -1 means that marker was not found.
+     */
+    private static void checkFromBeforeTo(int fromIndex, int toIndex) throws DuncanException {
+        if (fromIndex != -1 && toIndex != -1 && toIndex < fromIndex) {
+            throw new DuncanException(Command.MESSAGE_TO_BEFORE_FROM);
+        }
+    }
+
+    /** Throws if an event would end before it starts. Starting and ending on the same day is fine. */
+    private static void checkEventOrder(LocalDate from, LocalDate to) throws DuncanException {
+        if (from.isAfter(to)) {
+            throw new DuncanException(MESSAGE_END_BEFORE_START);
+        }
     }
 }

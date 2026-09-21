@@ -3,9 +3,10 @@ package duncan.command;
 import duncan.DuncanException;
 import duncan.Storage;
 import duncan.Ui;
+import duncan.task.Task;
 import duncan.task.TaskList;
 
-/** Marks the task at a given 0-based index as not done. */
+/** Marks the task at a given 0-based index as not done, or says so if it already is not done. */
 public class UnmarkCommand extends Command {
     private final int taskIndex;
 
@@ -23,8 +24,13 @@ public class UnmarkCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
         checkTaskIndex(tasks, taskIndex);
-        tasks.get(taskIndex).markAsNotDone();
-        storage.save(tasks.getTasks());
-        ui.showTaskUnmarked(tasks.get(taskIndex));
+        Task task = tasks.get(taskIndex);
+        if (!task.isDone()) {
+            ui.showTaskAlreadyUnmarked(taskIndex + 1);
+            return;
+        }
+        task.markAsNotDone();
+        ui.showTaskUnmarked(task);
+        saveTasks(tasks, ui, storage);
     }
 }

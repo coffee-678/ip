@@ -1,7 +1,9 @@
 package duncan.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -67,5 +69,21 @@ public class EventTest {
         assertThrows(DateTimeException.class, () -> event.snooze(1));
 
         assertEquals("E\t0\tproject fair\t" + from + "\t" + LocalDate.MAX, event.toFileFormat());
+    }
+
+    @Test
+    public void isDuplicateOf_sameDescriptionAndDates_true() {
+        Event event = new Event("project fair", LocalDate.of(2019, 12, 1), LocalDate.of(2019, 12, 2));
+
+        assertTrue(event.isDuplicateOf(
+                new Event("project fair", LocalDate.of(2019, 12, 1), LocalDate.of(2019, 12, 2))));
+    }
+
+    @Test
+    public void isDuplicateOf_differentEndDate_false() {
+        Event event = new Event("project fair", LocalDate.of(2019, 12, 1), LocalDate.of(2019, 12, 2));
+
+        assertFalse(event.isDuplicateOf(
+                new Event("project fair", LocalDate.of(2019, 12, 1), LocalDate.of(2019, 12, 3))));
     }
 }

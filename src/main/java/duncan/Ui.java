@@ -107,6 +107,14 @@ public class Ui {
     }
 
     /**
+     * Returns whether there is another line of console input to read, waiting
+     * for one if needed. False once the input has ended, e.g. after Ctrl-D.
+     */
+    public boolean hasNextCommand() {
+        return scanner.hasNextLine();
+    }
+
+    /**
      * Shows the current task list, numbered from 1 in the order the tasks
      * were added.
      */
@@ -142,6 +150,16 @@ public class Ui {
     public void showTaskUnmarked(Task task) {
         showLines("OK, I've marked this task as not done yet:",
                 "  " + task);
+    }
+
+    /** Shows that the task with the given 1-based number was already done, so nothing changed. */
+    public void showTaskAlreadyMarked(int taskNumber) {
+        showLines("Task " + taskNumber + " is already marked as done");
+    }
+
+    /** Shows that the task with the given 1-based number was already not done, so nothing changed. */
+    public void showTaskAlreadyUnmarked(int taskNumber) {
+        showLines("Task " + taskNumber + " is already marked as not done");
     }
 
     /**

@@ -2,6 +2,7 @@ package duncan.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 
@@ -44,5 +45,21 @@ public class MarkCommandTest {
 
         assertEquals("HEY! this task number is bad", e.getMessage());
         assertEquals(" ", tasks.get(0).getStatusIcon());
+    }
+
+    @Test
+    public void execute_taskAlreadyDone_noticeShownAndNothingSaved() throws DuncanException {
+        TaskList tasks = new TaskList();
+        Todo todo = new Todo("read book");
+        todo.markAsDone();
+        tasks.add(todo);
+        Ui ui = new Ui();
+        Storage storage = newStorage();
+
+        new MarkCommand(0).execute(tasks, ui, storage);
+
+        assertEquals("Task 1 is already marked as done" + System.lineSeparator(), ui.flushOutput());
+        assertEquals("X", tasks.get(0).getStatusIcon());
+        assertTrue(storage.load().isEmpty());
     }
 }

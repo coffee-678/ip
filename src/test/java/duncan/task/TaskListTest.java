@@ -241,4 +241,20 @@ public class TaskListTest {
 
         assertSame(tasks.getTasks(), tasks.getTasks());
     }
+
+    // ---- hasDuplicateOf ----
+
+    @Test
+    public void hasDuplicateOf_sameTaskInList_true() {
+        TaskList tasks = taskListOfSize(3);
+
+        assertTrue(tasks.hasDuplicateOf(new Todo("TASK 1")));
+    }
+
+    @Test
+    public void hasDuplicateOf_noSameTaskInList_false() {
+        TaskList tasks = taskListOfSize(3);
+
+        assertFalse(tasks.hasDuplicateOf(new Todo("task 3")));
+    }
 }

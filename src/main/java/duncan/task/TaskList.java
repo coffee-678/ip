@@ -51,6 +51,11 @@ public class TaskList {
         return index >= 0 && index < tasks.size();
     }
 
+    /** Returns whether the list already has a task that counts as the same as {@code task}. */
+    public boolean hasDuplicateOf(Task task) {
+        return tasks.stream().anyMatch(existing -> existing.isDuplicateOf(task));
+    }
+
     /** Returns the tasks whose description contains {@code keyword} (case-insensitive). */
     public ArrayList<Task> find(String keyword) {
         String lowerCaseKeyword = keyword.toLowerCase();

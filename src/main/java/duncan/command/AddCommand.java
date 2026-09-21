@@ -8,9 +8,11 @@ import duncan.task.TaskList;
 
 /**
  * Adds one already-built task (a {@link duncan.task.Todo}, {@link duncan.task.Deadline}, or
- * {@link duncan.task.Event}) to the task list.
+ * {@link duncan.task.Event}) to the task list, unless the list already has the same task.
  */
 public class AddCommand extends Command {
+    private static final String MESSAGE_DUPLICATE_TASK = "HEY! this task is already in your list";
+
     private final Task task;
 
     /**
@@ -25,9 +27,12 @@ public class AddCommand extends Command {
     /** {@inheritDoc} */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws DuncanException {
+        if (tasks.hasDuplicateOf(task)) {
+            throw new DuncanException(MESSAGE_DUPLICATE_TASK);
+        }
         tasks.add(task);
         assert tasks.get(tasks.size() - 1) == task;
-        storage.save(tasks.getTasks());
         ui.showTaskAdded(task, tasks.size());
+        saveTasks(tasks, ui, storage);
     }
 }
